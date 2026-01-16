@@ -67,201 +67,216 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
             Expanded(
               child: ListView(
-                padding: EdgeInsets.zero,
+                padding: const EdgeInsets.only(bottom: 100),
                 children: [
-                  const SizedBox(height: 5),
-                  AppImageSlider(sliders: auth.sliders),
                   const SizedBox(height: 10),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 10),
-                        Transform.translate(
-                          offset: const Offset(0, -35),
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            clipBehavior: Clip.none,
-                            child: stats.isEmpty
-                                ? Shimmer.fromColors(
-                                    baseColor: Colors.grey[300]!,
-                                    highlightColor: Colors.grey[100]!,
-                                    child: Row(
-                                      children: List.generate(
-                                        4,
-                                        (index) => const StatSkeleton(),
-                                      ),
-                                    ),
-                                  )
-                                : Row(
-                                    children: isDinas
-                                        ? [
-                                            StatCard(
-                                              title: "Total Sekolah",
-                                              value:
-                                                  "${stats['total_sekolah'] ?? 0}",
-                                              icon: Icons.school_rounded,
-                                              color: Colors.blue,
-                                            ),
-                                            StatCard(
-                                              title: "Menunggu",
-                                              value:
-                                                  "${stats['menunggu_persetujuan'] ?? 0}",
-                                              icon:
-                                                  Icons.pending_actions_rounded,
-                                              color: Colors.orange,
-                                            ),
-                                            StatCard(
-                                              title: "Sekolah Aktif",
-                                              value:
-                                                  "${stats['sekolah_aktif'] ?? 0}",
-                                              icon: Icons.check_circle_rounded,
-                                              color: Colors.green,
-                                            ),
-                                            StatCard(
-                                              title: "Total Siswa",
-                                              value:
-                                                  "${stats['total_siswa_nasional'] ?? 0}",
-                                              icon: Icons.groups_rounded,
-                                              color: Colors.purple,
-                                            ),
-                                          ]
-                                        : [
-                                            StatCard(
-                                              title: "Total Siswa",
-                                              value:
-                                                  "${stats['total_siswa'] ?? 0}",
-                                              icon: Icons.groups_rounded,
-                                              color: Colors.blue,
-                                            ),
-                                            StatCard(
-                                              title: "Total Guru",
-                                              value:
-                                                  "${stats['total_guru'] ?? 0}",
-                                              icon: Icons.person_rounded,
-                                              color: Colors.orange,
-                                            ),
-                                            StatCard(
-                                              title: "Total Kelas",
-                                              value:
-                                                  "${stats['total_kelas'] ?? 0}",
-                                              icon:
-                                                  Icons.door_front_door_rounded,
-                                              color: Colors.green,
-                                            ),
-                                            StatCard(
-                                              title: "Total Buku",
-                                              value:
-                                                  "${stats['total_buku'] ?? 0}",
-                                              icon: Icons.menu_book_rounded,
-                                              color: Colors.purple,
-                                            ),
-                                          ],
-                                  ),
-                          ),
-                        ),
-                        const Text(
-                          "Menu Utama",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.textPrimary,
-                          ),
-                        ),
-                        const SizedBox(height: 15),
-                        GridView.count(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          crossAxisCount: 4,
-                          mainAxisSpacing: 15,
-                          crossAxisSpacing: 15,
-                          childAspectRatio: 0.8,
-                          children: [
-                            ActionMenuItem(
-                              icon: user?.role == 'siswa'
-                                  ? Icons.how_to_reg_rounded
-                                  : Icons.face,
-                              label: user?.role == 'siswa'
-                                  ? "Absensi"
-                                  : "Siswa",
-                              color: Colors.blue,
-                              onTap: () {
-                                if (user?.role == 'siswa') {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          const AttendanceScreen(),
-                                    ),
-                                  );
-                                }
-                              },
-                            ),
-                            ActionMenuItem(
-                              icon: Icons.co_present,
-                              label: "Guru",
-                              color: Colors.orange,
-                              onTap: () {},
-                            ),
-                            ActionMenuItem(
-                              icon: Icons.calendar_today_rounded,
-                              label: "Jadwal",
-                              color: Colors.red,
-                              onTap: () {},
-                            ),
-                            ActionMenuItem(
-                              icon: Icons.score_rounded,
-                              label: "Nilai",
-                              color: Colors.green,
-                              onTap: () {},
-                            ),
-                            ActionMenuItem(
-                              icon: Icons.local_library_rounded,
-                              label: "Perpus",
-                              color: Colors.purple,
-                              onTap: () {},
-                            ),
-                            ActionMenuItem(
-                              icon: Icons.assignment_rounded,
-                              label: "Tugas",
-                              color: Colors.teal,
-                              onTap: () {},
-                            ),
-                            ActionMenuItem(
-                              icon: Icons.analytics_rounded,
-                              label: "Laporan",
-                              color: Colors.indigo,
-                              onTap: () {},
-                            ),
-                            ActionMenuItem(
-                              icon: Icons.grid_view_rounded,
-                              label: "Lainnya",
-                              color: Colors.grey,
-                              onTap: () {},
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 30),
-                        if (user?.role == 'siswa') ...[
-                          TodayScheduleWidget(
-                            schedules: auth.todaySchedule,
-                            serverTime: auth.serverTime,
-                            onAttendanceTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const AttendanceScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          const SizedBox(height: 30),
-                        ],
-                      ],
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(18),
+                      child: AppImageSlider(sliders: auth.sliders),
                     ),
                   ),
+                  const SizedBox(height: 18),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: _buildSectionHeader(
+                      "Ringkasan Hari Ini",
+                      "Statistik utama",
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: SizedBox(
+                      height: 130,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        clipBehavior: Clip.none,
+                        child: stats.isEmpty
+                            ? Shimmer.fromColors(
+                                baseColor: Colors.grey[300]!,
+                                highlightColor: Colors.grey[100]!,
+                                child: Row(
+                                  children: List.generate(
+                                    4,
+                                    (index) => const StatSkeleton(),
+                                  ),
+                                ),
+                              )
+                            : Row(
+                                children: isDinas
+                                    ? [
+                                        StatCard(
+                                          title: "Total Sekolah",
+                                          value:
+                                              "${stats['total_sekolah'] ?? 0}",
+                                          icon: Icons.school_rounded,
+                                          color: Colors.blue,
+                                        ),
+                                        StatCard(
+                                          title: "Menunggu",
+                                          value:
+                                              "${stats['menunggu_persetujuan'] ?? 0}",
+                                          icon: Icons.pending_actions_rounded,
+                                          color: Colors.orange,
+                                        ),
+                                        StatCard(
+                                          title: "Sekolah Aktif",
+                                          value:
+                                              "${stats['sekolah_aktif'] ?? 0}",
+                                          icon: Icons.check_circle_rounded,
+                                          color: Colors.green,
+                                        ),
+                                        StatCard(
+                                          title: "Total Siswa",
+                                          value:
+                                              "${stats['total_siswa_nasional'] ?? 0}",
+                                          icon: Icons.groups_rounded,
+                                          color: Colors.purple,
+                                        ),
+                                      ]
+                                    : [
+                                        StatCard(
+                                          title: "Total Siswa",
+                                          value: "${stats['total_siswa'] ?? 0}",
+                                          icon: Icons.groups_rounded,
+                                          color: Colors.blue,
+                                        ),
+                                        StatCard(
+                                          title: "Total Guru",
+                                          value: "${stats['total_guru'] ?? 0}",
+                                          icon: Icons.person_rounded,
+                                          color: Colors.orange,
+                                        ),
+                                        StatCard(
+                                          title: "Total Kelas",
+                                          value: "${stats['total_kelas'] ?? 0}",
+                                          icon: Icons.door_front_door_rounded,
+                                          color: Colors.green,
+                                        ),
+                                        StatCard(
+                                          title: "Total Buku",
+                                          value: "${stats['total_buku'] ?? 0}",
+                                          icon: Icons.menu_book_rounded,
+                                          color: Colors.purple,
+                                        ),
+                                      ],
+                              ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: _buildSectionHeader(
+                      "Menu Utama",
+                      "Akses cepat fitur",
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: AppTheme.surface,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Colors.black.withOpacity(0.06),
+                        ),
+                      ),
+                      child: GridView.count(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        crossAxisCount: 4,
+                        mainAxisSpacing: 14,
+                        crossAxisSpacing: 14,
+                        childAspectRatio: 0.86,
+                        children: [
+                          ActionMenuItem(
+                            icon: user?.role == 'siswa'
+                                ? Icons.how_to_reg_rounded
+                                : Icons.face,
+                            label: user?.role == 'siswa' ? "Absensi" : "Siswa",
+                            color: Colors.blue,
+                            onTap: () {
+                              if (user?.role == 'siswa') {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const AttendanceScreen(),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                          ActionMenuItem(
+                            icon: Icons.co_present,
+                            label: "Guru",
+                            color: Colors.orange,
+                            onTap: () {},
+                          ),
+                          ActionMenuItem(
+                            icon: Icons.calendar_today_rounded,
+                            label: "Jadwal",
+                            color: Colors.red,
+                            onTap: () {},
+                          ),
+                          ActionMenuItem(
+                            icon: Icons.score_rounded,
+                            label: "Nilai",
+                            color: Colors.green,
+                            onTap: () {},
+                          ),
+                          ActionMenuItem(
+                            icon: Icons.local_library_rounded,
+                            label: "Perpus",
+                            color: Colors.purple,
+                            onTap: () {},
+                          ),
+                          ActionMenuItem(
+                            icon: Icons.assignment_rounded,
+                            label: "Tugas",
+                            color: Colors.teal,
+                            onTap: () {},
+                          ),
+                          ActionMenuItem(
+                            icon: Icons.analytics_rounded,
+                            label: "Laporan",
+                            color: Colors.indigo,
+                            onTap: () {},
+                          ),
+                          ActionMenuItem(
+                            icon: Icons.grid_view_rounded,
+                            label: "Lainnya",
+                            color: Colors.grey,
+                            onTap: () {},
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  if (user?.role == 'siswa') ...[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: TodayScheduleWidget(
+                        schedules: auth.todaySchedule,
+                        serverTime: auth.serverTime,
+                        onAttendanceTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const AttendanceScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
                 ],
               ),
             ),
@@ -300,6 +315,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title, String subtitle) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          subtitle.toUpperCase(),
+          style: const TextStyle(
+            color: AppTheme.textSecondary,
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppTheme.textPrimary,
+          ),
+        ),
+      ],
     );
   }
 }

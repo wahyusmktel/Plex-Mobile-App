@@ -29,8 +29,9 @@ class ProfileScreen extends StatelessWidget {
             child: Column(
               children: [
                 ProfileHeader(name: name, role: role),
-                Transform.translate(
-                  offset: const Offset(0, -30),
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: _buildStatsContainer(),
                 ),
                 Padding(
@@ -38,13 +39,10 @@ class ProfileScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      const SizedBox(height: 8),
+                      _buildSectionHeader(
                         "Pengaturan Akun",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.textPrimary,
-                        ),
+                        "Kelola akses dan preferensi",
                       ),
                       const SizedBox(height: 15),
                       ProfileMenuItem(
@@ -69,13 +67,9 @@ class ProfileScreen extends StatelessWidget {
                         onTap: () {},
                       ),
                       const SizedBox(height: 25),
-                      const Text(
+                      _buildSectionHeader(
                         "Informasi Lainnya",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.textPrimary,
-                        ),
+                        "Bantuan dan aplikasi",
                       ),
                       const SizedBox(height: 15),
                       ProfileMenuItem(
@@ -107,24 +101,42 @@ class ProfileScreen extends StatelessWidget {
 
   Widget _buildStatsContainer() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.symmetric(vertical: 20),
       decoration: BoxDecoration(
         color: AppTheme.surface,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: Colors.black.withOpacity(0.06)),
         boxShadow: AppTheme.softShadow,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          _buildStatItem(
-            "Activity",
-            "85%",
-            Icons.insights_rounded,
-            Colors.blue,
+          Expanded(
+            child: _buildStatItem(
+              "Activity",
+              "85%",
+              Icons.insights_rounded,
+              Colors.blue,
+            ),
           ),
-          _buildStatItem("Books", "124", Icons.book_rounded, Colors.orange),
-          _buildStatItem("Points", "2.4k", Icons.star_rounded, Colors.green),
+          _buildStatDivider(),
+          Expanded(
+            child: _buildStatItem(
+              "Books",
+              "124",
+              Icons.book_rounded,
+              Colors.orange,
+            ),
+          ),
+          _buildStatDivider(),
+          Expanded(
+            child: _buildStatItem(
+              "Points",
+              "2.4k",
+              Icons.star_rounded,
+              Colors.green,
+            ),
+          ),
         ],
       ),
     );
@@ -158,6 +170,40 @@ class ProfileScreen extends StatelessWidget {
         Text(
           label,
           style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatDivider() {
+    return Container(
+      width: 1,
+      height: 44,
+      color: Colors.black.withOpacity(0.06),
+    );
+  }
+
+  Widget _buildSectionHeader(String title, String subtitle) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          subtitle.toUpperCase(),
+          style: const TextStyle(
+            color: AppTheme.textSecondary,
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: AppTheme.textPrimary,
+          ),
         ),
       ],
     );
