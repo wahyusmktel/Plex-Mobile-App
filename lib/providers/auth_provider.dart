@@ -5,6 +5,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 import '../models/slider_model.dart';
 import '../models/schedule_model.dart';
+import '../models/subject_model.dart';
+import '../models/grade_model.dart';
+import '../models/e_learning_model.dart';
+import '../models/cbt_model.dart';
 import '../services/auth_service.dart';
 
 class AuthProvider with ChangeNotifier {
@@ -15,6 +19,11 @@ class AuthProvider with ChangeNotifier {
   Map<String, dynamic> _dashboardStats = {};
   List<SliderModel> _sliders = [];
   List<ScheduleModel> _todaySchedule = [];
+  List<SubjectModel> _subjects = [];
+  Map<String, dynamic> _fullSchedule = {};
+  List<GradeModel> _grades = [];
+  List<ELearningModel> _elearningCourses = [];
+  ELearningModel? _selectedCourse;
   String? _serverTime;
 
   UserModel? get user => _user;
@@ -23,6 +32,11 @@ class AuthProvider with ChangeNotifier {
   Map<String, dynamic> get dashboardStats => _dashboardStats;
   List<SliderModel> get sliders => _sliders;
   List<ScheduleModel> get todaySchedule => _todaySchedule;
+  List<SubjectModel> get subjects => _subjects;
+  Map<String, dynamic> get fullSchedule => _fullSchedule;
+  List<GradeModel> get grades => _grades;
+  List<ELearningModel> get elearningCourses => _elearningCourses;
+  ELearningModel? get selectedCourse => _selectedCourse;
   String? get serverTime => _serverTime;
   bool get isAuthenticated => _token != null;
 
@@ -156,12 +170,258 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  Future<void> fetchAllSubjects() async {
+    if (_token == null) return;
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _authService.getAllSubjects(_token!);
+      if (response.statusCode == 200 && response.data['status'] == 'success') {
+        final List<dynamic>? data = response.data['data'];
+        if (data != null) {
+          _subjects = data.map((json) => SubjectModel.fromJson(json)).toList();
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching subjects: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchAllSchedules() async {
+    if (_token == null) return;
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _authService.getAllSchedules(_token!);
+      if (response.statusCode == 200 && response.data['status'] == 'success') {
+        _fullSchedule = response.data['data'] ?? {};
+      }
+    } catch (e) {
+      debugPrint("Error fetching full schedule: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchAllGrades() async {
+    if (_token == null) return;
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _authService.getAllGrades(_token!);
+      if (response.statusCode == 200 && response.data['status'] == 'success') {
+        final List<dynamic>? data = response.data['data'];
+        if (data != null) {
+          _grades = data.map((json) => GradeModel.fromJson(json)).toList();
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching grades: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchELearningCourses() async {
+    if (_token == null) return;
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _authService.getELearningCourses(_token!);
+      if (response.statusCode == 200 && response.data['status'] == 'success') {
+        final List<dynamic>? data = response.data['data'];
+        if (data != null) {
+          _elearningCourses = data
+              .map((json) => ELearningModel.fromJson(json))
+              .toList();
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching elearning courses: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchELearningDetail(String id) async {
+    if (_token == null) return;
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _authService.getELearningDetail(_token!, id);
+      if (response.statusCode == 200 && response.data['status'] == 'success') {
+        _selectedCourse = ELearningModel.fromJson(response.data['data']);
+      }
+    } catch (e) {
+      debugPrint("Error fetching elearning detail: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<ELearningModuleModel?> getModuleDetail(String id) async {
+    if (_token == null) return null;
+
+    try {
+      final response = await _authService.getModuleDetail(_token!, id);
+      if (response.statusCode == 200 && response.data['status'] == 'success') {
+        return ELearningModuleModel.fromJson(response.data['data']);
+      }
+    } catch (e) {
+      debugPrint("Error fetching module detail: $e");
+    }
+    return null;
+  }
+
+  Future<bool> markModuleAsCompleted(String id) async {
+    if (_token == null) return false;
+
+    try {
+      final response = await _authService.completeModule(_token!, id);
+      if (response.statusCode == 200 && response.data['status'] == 'success') {
+        return true;
+      }
+    } catch (e) {
+      debugPrint("Error completing module: $e");
+    }
+    return false;
+  }
+
+  Future<bool> submitAssignment({
+    required String moduleId,
+    String? content,
+    String? filePath,
+    List<int>? bytes,
+    String? fileName,
+  }) async {
+    if (_token == null) return false;
+
+    try {
+      final response = await _authService.submitAssignment(
+        token: _token!,
+        moduleId: moduleId,
+        content: content,
+        filePath: filePath,
+        bytes: bytes,
+        fileName: fileName,
+      );
+      if (response.statusCode == 200 && response.data['status'] == 'success') {
+        return true;
+      }
+    } catch (e) {
+      debugPrint("Error submitting assignment: $e");
+    }
+    return false;
+  }
+
+  Future<Map<String, dynamic>?> getSubmission(String moduleId) async {
+    if (_token == null) return null;
+
+    try {
+      final response = await _authService.getSubmission(_token!, moduleId);
+      if (response.statusCode == 200 && response.data['status'] == 'success') {
+        return response.data['data'];
+      }
+    } catch (e) {
+      debugPrint("Error fetching submission: $e");
+    }
+    return null;
+  }
+
+  Future<CbtSessionModel?> startCbtSession(
+    String cbtId,
+    String cbtToken,
+  ) async {
+    if (_token == null) return null;
+
+    try {
+      final response = await _authService.startCbtSession(
+        _token!,
+        cbtId,
+        cbtToken,
+      );
+      if (response.statusCode == 200 && response.data['status'] == 'success') {
+        return CbtSessionModel.fromJson(response.data['data']);
+      }
+    } catch (e) {
+      debugPrint("Error starting CBT session: $e");
+    }
+    return null;
+  }
+
+  Future<List<CbtQuestionModel>> getCbtQuestions(String sessionId) async {
+    if (_token == null) return [];
+
+    try {
+      final response = await _authService.getCbtQuestions(_token!, sessionId);
+      if (response.statusCode == 200 && response.data['status'] == 'success') {
+        final List<dynamic> data = response.data['data'];
+        return data.map((q) => CbtQuestionModel.fromJson(q)).toList();
+      }
+    } catch (e) {
+      debugPrint("Error fetching CBT questions: $e");
+    }
+    return [];
+  }
+
+  Future<bool> submitCbtAnswer({
+    required String sessionId,
+    required String questionId,
+    String? optionId,
+    String? essayAnswer,
+  }) async {
+    if (_token == null) return false;
+
+    try {
+      final response = await _authService.submitCbtAnswer(
+        token: _token!,
+        sessionId: sessionId,
+        questionId: questionId,
+        optionId: optionId,
+        essayAnswer: essayAnswer,
+      );
+      if (response.statusCode == 200 && response.data['status'] == 'success') {
+        return true;
+      }
+    } catch (e) {
+      debugPrint("Error submitting CBT answer: $e");
+    }
+    return false;
+  }
+
+  Future<Map<String, dynamic>?> finishCbtSession(String sessionId) async {
+    if (_token == null) return null;
+
+    try {
+      final response = await _authService.finishCbtSession(_token!, sessionId);
+      if (response.statusCode == 200 && response.data['status'] == 'success') {
+        return response.data['data'];
+      }
+    } catch (e) {
+      debugPrint("Error finishing CBT session: $e");
+    }
+    return null;
+  }
+
   Future<Map<String, dynamic>> submitAttendance(
     String subjectId,
     String status,
   ) async {
-    if (_token == null)
+    if (_token == null) {
       return {'success': false, 'message': 'Not authenticated'};
+    }
 
     try {
       final response = await _authService.submitAttendance(

@@ -12,6 +12,10 @@ import '../widgets/action_menu_item.dart';
 import '../widgets/today_schedule_widget.dart';
 import 'profile_screen.dart';
 import 'attendance_screen.dart';
+import 'subject_list_screen.dart';
+import 'schedule_screen.dart';
+import 'grade_screen.dart';
+import 'e_learning_list_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -213,22 +217,44 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             },
                           ),
                           ActionMenuItem(
-                            icon: Icons.co_present,
-                            label: "Guru",
+                            icon: Icons.library_books_rounded,
+                            label: "Mata Pelajaran",
                             color: Colors.orange,
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const SubjectListScreen(),
+                                ),
+                              );
+                            },
                           ),
                           ActionMenuItem(
                             icon: Icons.calendar_today_rounded,
                             label: "Jadwal",
                             color: Colors.red,
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const ScheduleScreen(),
+                                ),
+                              );
+                            },
                           ),
                           ActionMenuItem(
                             icon: Icons.score_rounded,
                             label: "Nilai",
                             color: Colors.green,
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const GradeScreen(),
+                                ),
+                              );
+                            },
                           ),
                           ActionMenuItem(
                             icon: Icons.local_library_rounded,
@@ -237,10 +263,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             onTap: () {},
                           ),
                           ActionMenuItem(
-                            icon: Icons.assignment_rounded,
-                            label: "Tugas",
-                            color: Colors.teal,
-                            onTap: () {},
+                            icon: Icons.auto_stories_rounded,
+                            label: "E-Learning",
+                            color: Colors.orange,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ELearningListScreen(),
+                                ),
+                              );
+                            },
                           ),
                           ActionMenuItem(
                             icon: Icons.analytics_rounded,

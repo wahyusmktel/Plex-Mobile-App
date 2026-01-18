@@ -45,6 +45,7 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
       listen: false,
     ).submitAttendance(subjectId, status);
 
+    if (!mounted) return;
     setState(() => _isSubmitting = false);
 
     if (result['success']) {
