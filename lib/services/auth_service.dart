@@ -374,4 +374,46 @@ class AuthService {
       rethrow;
     }
   }
+
+  Future<Response> getProfile(String token) async {
+    try {
+      return await _dio.get(
+        '/profile',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> updateProfile(
+    String token,
+    Map<String, dynamic> data,
+  ) async {
+    try {
+      return await _dio.post(
+        '/profile/update',
+        data: data,
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> updateAvatar(String token, String filePath) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'avatar': await MultipartFile.fromFile(filePath),
+      });
+
+      return await _dio.post(
+        '/profile/avatar',
+        data: formData,
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

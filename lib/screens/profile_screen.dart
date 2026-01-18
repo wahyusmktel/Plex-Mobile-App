@@ -6,6 +6,7 @@ import '../utils/notification_helper.dart';
 import '../widgets/profile_header.dart';
 import '../widgets/profile_menu_item.dart';
 import 'login_screen.dart';
+import 'edit_profile_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -28,7 +29,13 @@ class ProfileScreen extends StatelessWidget {
           return SingleChildScrollView(
             child: Column(
               children: [
-                ProfileHeader(name: name, role: role),
+                ProfileHeader(
+                  name: name,
+                  role: role,
+                  avatarUrl:
+                      user?.avatar ??
+                      "https://ui-avatars.com/api/?name=${Uri.encodeComponent(name)}&background=random&size=256",
+                ),
                 const SizedBox(height: 16),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -50,7 +57,14 @@ class ProfileScreen extends StatelessWidget {
                         title: "Edit Profil",
                         subtitle: "Kelola data diri dan bio",
                         color: Colors.blue,
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const EditProfileScreen(),
+                            ),
+                          );
+                        },
                       ),
                       ProfileMenuItem(
                         icon: Icons.notifications_none_rounded,

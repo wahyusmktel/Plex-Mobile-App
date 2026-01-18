@@ -34,6 +34,7 @@ class AuthProvider with ChangeNotifier {
   ForumModel? _selectedForum;
   ForumTopicModel? _selectedTopic;
   String? _serverTime;
+  Map<String, dynamic>? _profileData;
 
   UserModel? get user => _user;
   String? get token => _token;
@@ -52,6 +53,7 @@ class AuthProvider with ChangeNotifier {
   ForumModel? get selectedForum => _selectedForum;
   ForumTopicModel? get selectedTopic => _selectedTopic;
   String? get serverTime => _serverTime;
+  Map<String, dynamic>? get profileData => _profileData;
   bool get isAuthenticated => _token != null;
 
   AuthProvider() {
@@ -617,5 +619,109 @@ class AuthProvider with ChangeNotifier {
       debugPrint("Error posting forum reply: $e");
     }
     return false;
+  }
+
+  Future<void> fetchProfile() async {
+    if (_token == null) return;
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _authService.getProfile(_token!);
+      if (response.statusCode == 200 && response.data['success']) {
+        _profileData = response.data['data'];
+        // Update user model if avatar or name changed
+        _user = UserModel.fromJson({
+          ..._user!.toJson(),
+          'name': _profileData!['name'],
+          'avatar':
+              _profileData!['avatar_url'], // Map backend avatar_url to what UserModel expects or update UserModel
+        });
+
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('user_data', jsonEncode(_user!.toJson()));
+      }
+    } catch (e) {
+      debugPrint("Error fetching profile: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<Map<String, dynamic>> updateProfile(Map<String, dynamic> data) async {
+    if (_token == null)
+      return {'success': false, 'message': 'Not authenticated'};
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _authService.updateProfile(_token!, data);
+      if (response.statusCode == 200 && response.data['success']) {
+        _profileData = response.data['data'];
+        _user = UserModel.fromJson({
+          ..._user!.toJson(),
+          'name': _profileData!['name'],
+          'email': _profileData!['email'],
+        });
+
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('user_data', jsonEncode(_user!.toJson()));
+
+        _isLoading = false;
+        notifyListeners();
+        return {'success': true, 'message': response.data['message']};
+      } else {
+        _isLoading = false;
+        notifyListeners();
+        return {
+          'success': false,
+          'message': response.data['message'] ?? 'Gagal memperbarui profil',
+          'errors': response.data['errors'],
+        };
+      }
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      return {'success': false, 'message': 'Terjadi kesalahan sistem'};
+    }
+  }
+
+  Future<Map<String, dynamic>> updateAvatar(String filePath) async {
+    if (_token == null)
+      return {'success': false, 'message': 'Not authenticated'};
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _authService.updateAvatar(_token!, filePath);
+      if (response.statusCode == 200 && response.data['success']) {
+        final avatarUrl = response.data['avatar_url'];
+        _user = UserModel.fromJson({..._user!.toJson(), 'avatar': avatarUrl});
+
+        if (_profileData != null) {
+          _profileData!['avatar_url'] = avatarUrl;
+        }
+
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('user_data', jsonEncode(_user!.toJson()));
+
+        _isLoading = false;
+        notifyListeners();
+        return {'success': true, 'message': response.data['message']};
+      } else {
+        _isLoading = false;
+        notifyListeners();
+        return {
+          'success': false,
+          'message':
+              response.data['message'] ?? 'Gagal memperbarui foto profil',
+        };
+      }
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      return {'success': false, 'message': 'Terjadi kesalahan sistem'};
+    }
   }
 }
