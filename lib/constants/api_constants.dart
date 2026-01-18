@@ -1,6 +1,6 @@
 class ApiConstants {
-  static const String baseUrl = 'http://127.0.0.1:8000/api';
-  static const String baseStorageUrl = 'http://127.0.0.1:8000/storage';
+  static const String baseUrl = 'http://36.50.142.248:8000/api';
+  static const String baseStorageUrl = 'http://36.50.142.248:8000/storage';
 
   // Auth Endpoints
   static const String login = '/login';
