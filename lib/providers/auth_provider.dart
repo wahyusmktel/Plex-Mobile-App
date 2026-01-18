@@ -10,6 +10,7 @@ import '../models/grade_model.dart';
 import '../models/e_learning_model.dart';
 import '../models/cbt_model.dart';
 import '../models/bank_soal_model.dart';
+import '../models/forum_model.dart';
 import '../services/auth_service.dart';
 
 class AuthProvider with ChangeNotifier {
@@ -27,6 +28,9 @@ class AuthProvider with ChangeNotifier {
   ELearningModel? _selectedCourse;
   List<BankSoalModel> _bankSoals = [];
   BankSoalModel? _selectedBankSoal;
+  List<ForumModel> _forums = [];
+  ForumModel? _selectedForum;
+  ForumTopicModel? _selectedTopic;
   String? _serverTime;
 
   UserModel? get user => _user;
@@ -42,6 +46,9 @@ class AuthProvider with ChangeNotifier {
   ELearningModel? get selectedCourse => _selectedCourse;
   List<BankSoalModel> get bankSoals => _bankSoals;
   BankSoalModel? get selectedBankSoal => _selectedBankSoal;
+  List<ForumModel> get forums => _forums;
+  ForumModel? get selectedForum => _selectedForum;
+  ForumTopicModel? get selectedTopic => _selectedTopic;
   String? get serverTime => _serverTime;
   bool get isAuthenticated => _token != null;
 
@@ -492,5 +499,121 @@ class AuthProvider with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  Future<void> fetchForums() async {
+    if (_token == null) return;
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _authService.getForums(_token!);
+      if (response.statusCode == 200 && response.data['success']) {
+        final List<dynamic>? data = response.data['data'];
+        if (data != null) {
+          _forums = data.map((json) => ForumModel.fromJson(json)).toList();
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching forums: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchForumDetail(String id) async {
+    if (_token == null) return;
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _authService.getForumDetail(_token!, id);
+      if (response.statusCode == 200 && response.data['success']) {
+        final data = response.data['data'];
+        _selectedForum = ForumModel.fromJson(data['forum']);
+        // Topics are in the same response
+        final topics = (data['topics'] as List?)
+            ?.map((t) => ForumTopicModel.fromJson(t))
+            .toList();
+        _selectedForum = ForumModel(
+          id: _selectedForum!.id,
+          title: _selectedForum!.title,
+          description: _selectedForum!.description,
+          creator: _selectedForum!.creator,
+          visibility: _selectedForum!.visibility,
+          topicsCount: _selectedForum!.topicsCount,
+          createdAt: _selectedForum!.createdAt,
+          topics: topics,
+        );
+      }
+    } catch (e) {
+      debugPrint("Error fetching forum detail: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchForumTopic(String id) async {
+    if (_token == null) return;
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _authService.getForumTopic(_token!, id);
+      if (response.statusCode == 200 && response.data['success']) {
+        final data = response.data['data'];
+        _selectedTopic = ForumTopicModel(
+          id: data['topic']['id']?.toString() ?? '',
+          title: data['topic']['title']?.toString() ?? '',
+          content: data['topic']['content']?.toString() ?? '',
+          user: data['topic']['user']?.toString() ?? 'Anonim',
+          postsCount: 0,
+          isPinned: false,
+          isLocked:
+              data['topic']['is_locked'] == true ||
+              data['topic']['is_locked'] == 1,
+          status: data['topic']['status']?.toString() ?? 'active',
+          createdAt: data['topic']['created_at']?.toString() ?? '',
+          posts: (data['posts'] as List?)
+              ?.map((p) => ForumPostModel.fromJson(p))
+              .toList(),
+          isBookmarked:
+              data['is_bookmarked'] == true || data['is_bookmarked'] == 1,
+          isMuted: data['is_muted'] == true || data['is_muted'] == 1,
+        );
+      }
+    } catch (e) {
+      debugPrint("Error fetching forum topic: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> postForumReply(
+    String topicId,
+    String content, {
+    String? parentId,
+  }) async {
+    if (_token == null) return false;
+
+    try {
+      final response = await _authService.postForumReply(
+        _token!,
+        topicId,
+        content,
+        parentId,
+      );
+      if (response.statusCode == 200 && response.data['success']) {
+        // Refresh topic after posting
+        await fetchForumTopic(topicId);
+        return true;
+      }
+    } catch (e) {
+      debugPrint("Error posting forum reply: $e");
+    }
+    return false;
   }
 }

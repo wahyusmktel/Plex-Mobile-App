@@ -17,6 +17,7 @@ import 'schedule_screen.dart';
 import 'grade_screen.dart';
 import 'e_learning_list_screen.dart';
 import 'bank_soal_list_screen.dart';
+import 'forum_list_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -292,10 +293,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             },
                           ),
                           ActionMenuItem(
-                            icon: Icons.grid_view_rounded,
-                            label: "Lainnya",
-                            color: Colors.grey,
-                            onTap: () {},
+                            icon: Icons.forum_rounded,
+                            label: "Forum",
+                            color: Colors.teal,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const ForumListScreen(),
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),

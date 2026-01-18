@@ -307,4 +307,54 @@ class AuthService {
       rethrow;
     }
   }
+
+  Future<Response> getForums(String token) async {
+    try {
+      return await _dio.get(
+        '/student/forums',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> getForumDetail(String token, String id) async {
+    try {
+      return await _dio.get(
+        '/student/forums/$id',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> getForumTopic(String token, String id) async {
+    try {
+      return await _dio.get(
+        '/student/forums/topic/$id',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> postForumReply(
+    String token,
+    String topicId,
+    String content,
+    String? parentId,
+  ) async {
+    try {
+      return await _dio.post(
+        '/student/forums/topic/$topicId/post',
+        data: {'content': content, 'parent_id': parentId},
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
