@@ -190,8 +190,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               icon: user?.role == 'siswa'
                                   ? Icons.how_to_reg_rounded
                                   : Icons.face,
-                              label:
-                                  user?.role == 'siswa' ? "Absensi" : "Siswa",
+                              label: user?.role == 'siswa'
+                                  ? "Absensi"
+                                  : "Siswa",
                               colors: const [
                                 Color(0xFF4F8DF7),
                                 Color(0xFF6FB1FC),
@@ -253,8 +254,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        const GradeScreen(),
+                                    builder: (context) => const GradeScreen(),
                                   ),
                                 );
                               },
@@ -321,8 +321,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        const CbtListScreen(),
+                                    builder: (context) => const CbtListScreen(),
                                   ),
                                 );
                               },
@@ -372,8 +371,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ERaportScreen(),
+                                    builder: (context) => const ERaportScreen(),
                                   ),
                                 );
                               },
@@ -478,11 +476,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: Ink(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: colors ??
-                  [
-                    baseColor.withOpacity(0.9),
-                    baseColor.withOpacity(0.6),
-                  ],
+              colors:
+                  colors ??
+                  [baseColor.withOpacity(0.9), baseColor.withOpacity(0.6)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
