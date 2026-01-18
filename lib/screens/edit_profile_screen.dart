@@ -19,10 +19,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late TextEditingController _emailController;
   late TextEditingController _phoneController;
   late TextEditingController _addressController;
-  late TextEditingController _passwordController;
-  late TextEditingController _passwordConfirmController;
 
-  bool _isPasswordVisible = false;
   File? _imageFile;
   final _picker = ImagePicker();
 
@@ -41,8 +38,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _addressController = TextEditingController(
       text: detail['alamat']?.toString() ?? '',
     );
-    _passwordController = TextEditingController();
-    _passwordConfirmController = TextEditingController();
 
     // Fetch latest profile data
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -68,8 +63,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _emailController.dispose();
     _phoneController.dispose();
     _addressController.dispose();
-    _passwordController.dispose();
-    _passwordConfirmController.dispose();
     super.dispose();
   }
 
@@ -113,20 +106,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       'alamat': _addressController.text.trim(),
     };
 
-    if (_passwordController.text.isNotEmpty) {
-      data['password'] = _passwordController.text;
-      data['password_confirmation'] = _passwordConfirmController.text;
-    }
-
     final result = await auth.updateProfile(data);
 
     if (mounted) {
       if (result['success']) {
         NotificationHelper.showSuccess(context, result['message']);
-        if (_passwordController.text.isNotEmpty) {
-          _passwordController.clear();
-          _passwordConfirmController.clear();
-        }
       } else {
         String message = result['message'];
         if (result['errors'] != null) {
@@ -237,34 +221,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         label: "Alamat",
                         icon: Icons.location_on_outlined,
                         maxLines: 3,
-                      ),
-                      const SizedBox(height: 32),
-                      _buildSectionLabel("Ubah Kata Sandi (Opsional)"),
-                      const SizedBox(height: 16),
-                      _buildTextField(
-                        controller: _passwordController,
-                        label: "Kata Sandi Baru",
-                        icon: Icons.lock_outline_rounded,
-                        isPassword: true,
-                        obscureText: !_isPasswordVisible,
-                        toggleVisibility: () => setState(
-                          () => _isPasswordVisible = !_isPasswordVisible,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      _buildTextField(
-                        controller: _passwordConfirmController,
-                        label: "Konfirmasi Kata Sandi Baru",
-                        icon: Icons.lock_reset_rounded,
-                        isPassword: true,
-                        obscureText: !_isPasswordVisible,
-                        validator: (v) {
-                          if (_passwordController.text.isNotEmpty &&
-                              v != _passwordController.text) {
-                            return "Konfirmasi kata sandi tidak cocok";
-                          }
-                          return null;
-                        },
                       ),
                       const SizedBox(height: 40),
                       SizedBox(

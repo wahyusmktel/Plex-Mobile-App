@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 
 class DashboardHeader extends StatelessWidget {
+  final String? avatarUrl;
   final String userName;
   final String schoolName;
   final int unreadCount;
@@ -10,6 +11,7 @@ class DashboardHeader extends StatelessWidget {
 
   const DashboardHeader({
     super.key,
+    this.avatarUrl,
     required this.userName,
     required this.schoolName,
     required this.unreadCount,
@@ -156,7 +158,8 @@ class DashboardHeader extends StatelessWidget {
                       ),
                       child: ClipOval(
                         child: Image.network(
-                          "https://i.pravatar.cc/150?img=12",
+                          avatarUrl ??
+                              "https://ui-avatars.com/api/?name=${Uri.encodeComponent(userName)}&background=random",
                           width: 48,
                           height: 48,
                           fit: BoxFit.cover,

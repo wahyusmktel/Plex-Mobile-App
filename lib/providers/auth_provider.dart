@@ -724,4 +724,32 @@ class AuthProvider with ChangeNotifier {
       return {'success': false, 'message': 'Terjadi kesalahan sistem'};
     }
   }
+
+  Future<Map<String, dynamic>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    if (_token == null)
+      return {'success': false, 'message': 'Not authenticated'};
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final result = await _authService.changePassword(
+        _token!,
+        currentPassword,
+        newPassword,
+        confirmPassword,
+      );
+
+      _isLoading = false;
+      notifyListeners();
+      return result;
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      return {'success': false, 'message': 'Terjadi kesalahan sistem'};
+    }
+  }
 }

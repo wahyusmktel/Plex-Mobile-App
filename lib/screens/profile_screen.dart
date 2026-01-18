@@ -7,9 +7,25 @@ import '../widgets/profile_header.dart';
 import '../widgets/profile_menu_item.dart';
 import 'login_screen.dart';
 import 'edit_profile_screen.dart';
+import 'security_screen.dart';
+import 'notification_settings_screen.dart';
+import 'about_app_screen.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<AuthProvider>(context, listen: false).fetchProfile();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +34,9 @@ class ProfileScreen extends StatelessWidget {
       body: Consumer<AuthProvider>(
         builder: (context, auth, _) {
           final user = auth.user;
+          final Map<String, dynamic> stats = auth.profileData?['stats'] != null
+              ? Map<String, dynamic>.from(auth.profileData!['stats'])
+              : {};
           String name = user?.name ?? "User";
           String role = user?.schoolName ?? user?.role ?? "Literasia";
 
@@ -26,86 +45,112 @@ class ProfileScreen extends StatelessWidget {
             role = "Dinas Pendidikan";
           }
 
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                ProfileHeader(
-                  name: name,
-                  role: role,
-                  avatarUrl:
-                      user?.avatar ??
-                      "https://ui-avatars.com/api/?name=${Uri.encodeComponent(name)}&background=random&size=256",
-                ),
-                const SizedBox(height: 16),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: _buildStatsContainer(),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 8),
-                      _buildSectionHeader(
-                        "Pengaturan Akun",
-                        "Kelola akses dan preferensi",
-                      ),
-                      const SizedBox(height: 15),
-                      ProfileMenuItem(
-                        icon: Icons.person_outline_rounded,
-                        title: "Edit Profil",
-                        subtitle: "Kelola data diri dan bio",
-                        color: Colors.blue,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const EditProfileScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                      ProfileMenuItem(
-                        icon: Icons.notifications_none_rounded,
-                        title: "Notifikasi",
-                        subtitle: "Atur pemberitahuan aplikasi",
-                        color: Colors.orange,
-                        onTap: () {},
-                      ),
-                      ProfileMenuItem(
-                        icon: Icons.security_rounded,
-                        title: "Keamanan",
-                        subtitle: "Ubah kata sandi & privasi",
-                        color: Colors.green,
-                        onTap: () {},
-                      ),
-                      const SizedBox(height: 25),
-                      _buildSectionHeader(
-                        "Informasi Lainnya",
-                        "Bantuan dan aplikasi",
-                      ),
-                      const SizedBox(height: 15),
-                      ProfileMenuItem(
-                        icon: Icons.info_outline_rounded,
-                        title: "Tentang Aplikasi",
-                        subtitle: "Versi 1.0.0",
-                        color: Colors.purple,
-                        onTap: () {},
-                      ),
-                      ProfileMenuItem(
-                        icon: Icons.logout_rounded,
-                        title: "Keluar",
-                        subtitle: "Keluar dari akun Anda",
-                        color: AppTheme.error,
-                        isDestructive: true,
-                        onTap: () => _handleLogout(context),
-                      ),
-                    ],
+          return RefreshIndicator(
+            onRefresh: () => auth.fetchProfile(),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                children: [
+                  ProfileHeader(
+                    name: name,
+                    role: role,
+                    avatarUrl:
+                        user?.avatar ??
+                        "https://ui-avatars.com/api/?name=${Uri.encodeComponent(name)}&background=random&size=256",
                   ),
-                ),
-                const SizedBox(height: 50),
-              ],
+                  const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: _buildStatsContainer(stats),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 8),
+                        _buildSectionHeader(
+                          "Pengaturan Akun",
+                          "Kelola akses dan preferensi",
+                        ),
+                        const SizedBox(height: 15),
+                        ProfileMenuItem(
+                          icon: Icons.person_outline_rounded,
+                          title: "Edit Profil",
+                          subtitle: "Kelola data diri dan bio",
+                          color: Colors.blue,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const EditProfileScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        ProfileMenuItem(
+                          icon: Icons.notifications_none_rounded,
+                          title: "Notifikasi",
+                          subtitle: "Atur pemberitahuan aplikasi",
+                          color: Colors.orange,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const NotificationSettingsScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        ProfileMenuItem(
+                          icon: Icons.security_rounded,
+                          title: "Keamanan",
+                          subtitle: "Ubah kata sandi & privasi",
+                          color: Colors.green,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SecurityScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 25),
+                        _buildSectionHeader(
+                          "Informasi Lainnya",
+                          "Bantuan dan aplikasi",
+                        ),
+                        const SizedBox(height: 15),
+                        ProfileMenuItem(
+                          icon: Icons.info_outline_rounded,
+                          title: "Tentang Aplikasi",
+                          subtitle: "Versi 1.0.0",
+                          color: Colors.purple,
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const AboutAppScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        ProfileMenuItem(
+                          icon: Icons.logout_rounded,
+                          title: "Keluar",
+                          subtitle: "Keluar dari akun Anda",
+                          color: AppTheme.error,
+                          isDestructive: true,
+                          onTap: () => _handleLogout(context),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 50),
+                ],
+              ),
             ),
           );
         },
@@ -113,7 +158,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatsContainer() {
+  Widget _buildStatsContainer(Map<String, dynamic> stats) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 20),
       decoration: BoxDecoration(
@@ -128,7 +173,7 @@ class ProfileScreen extends StatelessWidget {
           Expanded(
             child: _buildStatItem(
               "Activity",
-              "85%",
+              stats['activity'] ?? '0%',
               Icons.insights_rounded,
               Colors.blue,
             ),
@@ -137,7 +182,7 @@ class ProfileScreen extends StatelessWidget {
           Expanded(
             child: _buildStatItem(
               "Books",
-              "124",
+              stats['books'] ?? '0',
               Icons.book_rounded,
               Colors.orange,
             ),
@@ -146,7 +191,7 @@ class ProfileScreen extends StatelessWidget {
           Expanded(
             child: _buildStatItem(
               "Points",
-              "2.4k",
+              stats['points'] ?? '0',
               Icons.star_rounded,
               Colors.green,
             ),

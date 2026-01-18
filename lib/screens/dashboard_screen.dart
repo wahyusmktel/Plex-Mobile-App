@@ -111,6 +111,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         return Column(
           children: [
             DashboardHeader(
+              avatarUrl: user?.avatar,
               userName: user?.name ?? "User",
               schoolName: user?.schoolName ?? user?.role ?? "Literasia",
               unreadCount: _unreadCount,

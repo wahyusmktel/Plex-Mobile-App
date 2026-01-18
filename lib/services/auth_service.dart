@@ -416,4 +416,27 @@ class AuthService {
       rethrow;
     }
   }
+
+  Future<Map<String, dynamic>> changePassword(
+    String token,
+    String currentPassword,
+    String newPassword,
+    String confirmPassword,
+  ) async {
+    try {
+      final response = await _dio.post(
+        '/profile/change-password',
+        data: {
+          'current_password': currentPassword,
+          'password': newPassword,
+          'password_confirmation': confirmPassword,
+        },
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+      return response.data;
+    } on DioException catch (e) {
+      return e.response?.data ??
+          {'success': false, 'message': 'Terjadi kesalahan sistem.'};
+    }
+  }
 }
