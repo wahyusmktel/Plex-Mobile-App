@@ -108,6 +108,7 @@ class _ELibraryScreenState extends State<ELibraryScreen>
       body: Column(
         children: [
           _buildSearchBar(),
+          _buildCategoryList(),
           Expanded(
             child: TabBarView(
               controller: _tabController,
@@ -121,76 +122,86 @@ class _ELibraryScreenState extends State<ELibraryScreen>
 
   Widget _buildSearchBar() {
     return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppTheme.surface,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.black.withOpacity(0.05)),
-              ),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Cari judul atau penulis...',
-                  prefixIcon: const Icon(
-                    Icons.search_rounded,
-                    color: Colors.grey,
-                  ),
-                  border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 14,
-                  ),
-                  suffixIcon: _searchQuery.isNotEmpty
-                      ? IconButton(
-                          icon: const Icon(Icons.close, size: 18),
-                          onPressed: () {
-                            _searchController.clear();
-                            setState(() => _searchQuery = '');
-                            _loadCatalog();
-                          },
-                        )
-                      : null,
-                ),
-                onSubmitted: (value) {
-                  setState(() => _searchQuery = value);
-                  _loadCatalog();
-                },
-              ),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppTheme.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.black.withOpacity(0.05)),
+        ),
+        child: TextField(
+          controller: _searchController,
+          decoration: InputDecoration(
+            hintText: 'Cari judul atau penulis...',
+            prefixIcon: const Icon(Icons.search_rounded, color: Colors.grey),
+            border: InputBorder.none,
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
             ),
+            suffixIcon: _searchQuery.isNotEmpty
+                ? IconButton(
+                    icon: const Icon(Icons.close, size: 18),
+                    onPressed: () {
+                      _searchController.clear();
+                      setState(() => _searchQuery = '');
+                      _loadCatalog();
+                    },
+                  )
+                : null,
           ),
-          if (_categories.isNotEmpty) ...[
-            const SizedBox(width: 12),
-            PopupMenuButton<String?>(
-              icon: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: _selectedKategori != null
-                      ? Colors.deepPurple
-                      : AppTheme.surface,
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Icon(
-                  Icons.filter_list_rounded,
-                  color: _selectedKategori != null ? Colors.white : Colors.grey,
+          onSubmitted: (value) {
+            setState(() => _searchQuery = value);
+            _loadCatalog();
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategoryList() {
+    if (_categories.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      height: 40,
+      margin: const EdgeInsets.only(bottom: 8),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: _categories.length + 1,
+        itemBuilder: (context, index) {
+          final isAll = index == 0;
+          final category = isAll ? null : _categories[index - 1];
+          final isSelected = _selectedKategori == category;
+
+          return Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: FilterChip(
+              selected: isSelected,
+              label: Text(
+                isAll ? 'Semua' : category!,
+                style: TextStyle(
+                  color: isSelected ? Colors.white : Colors.grey[700],
+                  fontSize: 12,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 ),
               ),
-              onSelected: (value) {
-                setState(() => _selectedKategori = value);
+              backgroundColor: Colors.white,
+              selectedColor: Colors.deepPurple,
+              checkmarkColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+                side: BorderSide(
+                  color: isSelected ? Colors.deepPurple : Colors.grey[200]!,
+                ),
+              ),
+              onSelected: (selected) {
+                setState(() => _selectedKategori = category);
                 _loadCatalog();
               },
-              itemBuilder: (context) => [
-                const PopupMenuItem(value: null, child: Text('Semua Kategori')),
-                ..._categories.map(
-                  (k) => PopupMenuItem(value: k, child: Text(k)),
-                ),
-              ],
             ),
-          ],
-        ],
+          );
+        },
       ),
     );
   }
@@ -353,6 +364,27 @@ class _ELibraryScreenState extends State<ELibraryScreen>
                             color: Colors.deepPurple,
                           ),
                         ),
+                        if (item['kategori'] != null) ...[
+                          const Spacer(),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.deepPurple.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              item['kategori'].toString().toUpperCase(),
+                              style: const TextStyle(
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.deepPurple,
+                              ),
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ],
