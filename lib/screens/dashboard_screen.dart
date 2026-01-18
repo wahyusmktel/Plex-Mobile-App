@@ -8,6 +8,7 @@ import '../theme/app_theme.dart';
 import '../widgets/floating_navbar.dart';
 import '../widgets/dashboard_header.dart';
 import '../widgets/app_image_slider.dart';
+import '../widgets/dashboard_skeleton.dart';
 
 import '../widgets/action_menu_item.dart';
 import '../widgets/today_schedule_widget.dart';
@@ -106,6 +107,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildHome() {
     return Consumer<AuthProvider>(
       builder: (context, auth, _) {
+        if (auth.isLoading && auth.sliders.isEmpty) {
+          return const DashboardSkeleton();
+        }
         final user = auth.user;
 
         return Column(

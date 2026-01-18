@@ -139,6 +139,8 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> getDashboardStats() async {
     if (_token == null) return;
+    _isLoading = true;
+    notifyListeners();
 
     try {
       // Parallelize fetches
@@ -147,9 +149,11 @@ class AuthProvider with ChangeNotifier {
         _fetchSliders(),
         if (_user?.role == 'siswa') _fetchTodaySchedule(),
       ]);
-      notifyListeners();
     } catch (e) {
       debugPrint("Error fetching dashboard data: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 

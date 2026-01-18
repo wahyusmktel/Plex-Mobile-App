@@ -29,14 +29,18 @@ class _AnnouncementsWidgetState extends State<AnnouncementsWidget> {
         options: auth.authService.authOptions(auth.token!),
       );
       if (response.statusCode == 200 && response.data['success'] == true) {
-        setState(() {
-          _announcements = response.data['data'] ?? [];
-        });
+        if (mounted) {
+          setState(() {
+            _announcements = response.data['data'] ?? [];
+          });
+        }
       }
     } catch (e) {
       debugPrint("Error loading announcements: $e");
     }
-    setState(() => _isLoading = false);
+    if (mounted) {
+      setState(() => _isLoading = false);
+    }
   }
 
   @override
