@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart';
+import '../widgets/announcements_widget.dart';
 import '../providers/auth_provider.dart';
 import '../theme/app_theme.dart';
 import '../widgets/floating_navbar.dart';
 import '../widgets/dashboard_header.dart';
 import '../widgets/app_image_slider.dart';
-import '../widgets/stat_card.dart';
+
 import '../widgets/action_menu_item.dart';
 import '../widgets/today_schedule_widget.dart';
 import 'profile_screen.dart';
@@ -19,6 +19,12 @@ import 'e_learning_list_screen.dart';
 import 'bank_soal_list_screen.dart';
 import 'forum_list_screen.dart';
 import 'cbt_list_screen.dart';
+import 'evoting_list_screen.dart';
+import 'berita_list_screen.dart';
+import 'eraport_screen.dart';
+import 'pelanggaran_screen.dart';
+import 'elibrary_screen.dart';
+import 'calendar_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -49,7 +55,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         index: _selectedIndex,
         children: [
           _buildHome(),
-          _buildPlaceholder("Halaman Belajar"),
+          const CalendarScreen(),
           _buildPlaceholder("Halaman Notifikasi"),
           const ProfileScreen(),
         ],
@@ -62,8 +68,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Consumer<AuthProvider>(
       builder: (context, auth, _) {
         final user = auth.user;
-        final stats = auth.dashboardStats;
-        final isDinas = user?.role == 'dinas';
 
         return Column(
           children: [
@@ -88,90 +92,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: _buildSectionHeader(
-                      "Ringkasan Hari Ini",
-                      "Statistik utama",
+                      "Pengumuman",
+                      "Informasi terbaru",
                     ),
                   ),
                   const SizedBox(height: 12),
                   Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: SizedBox(
-                      height: 130,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        clipBehavior: Clip.none,
-                        child: stats.isEmpty
-                            ? Shimmer.fromColors(
-                                baseColor: Colors.grey[300]!,
-                                highlightColor: Colors.grey[100]!,
-                                child: Row(
-                                  children: List.generate(
-                                    4,
-                                    (index) => const StatSkeleton(),
-                                  ),
-                                ),
-                              )
-                            : Row(
-                                children: isDinas
-                                    ? [
-                                        StatCard(
-                                          title: "Total Sekolah",
-                                          value:
-                                              "${stats['total_sekolah'] ?? 0}",
-                                          icon: Icons.school_rounded,
-                                          color: Colors.blue,
-                                        ),
-                                        StatCard(
-                                          title: "Menunggu",
-                                          value:
-                                              "${stats['menunggu_persetujuan'] ?? 0}",
-                                          icon: Icons.pending_actions_rounded,
-                                          color: Colors.orange,
-                                        ),
-                                        StatCard(
-                                          title: "Sekolah Aktif",
-                                          value:
-                                              "${stats['sekolah_aktif'] ?? 0}",
-                                          icon: Icons.check_circle_rounded,
-                                          color: Colors.green,
-                                        ),
-                                        StatCard(
-                                          title: "Total Siswa",
-                                          value:
-                                              "${stats['total_siswa_nasional'] ?? 0}",
-                                          icon: Icons.groups_rounded,
-                                          color: Colors.purple,
-                                        ),
-                                      ]
-                                    : [
-                                        StatCard(
-                                          title: "Total Siswa",
-                                          value: "${stats['total_siswa'] ?? 0}",
-                                          icon: Icons.groups_rounded,
-                                          color: Colors.blue,
-                                        ),
-                                        StatCard(
-                                          title: "Total Guru",
-                                          value: "${stats['total_guru'] ?? 0}",
-                                          icon: Icons.person_rounded,
-                                          color: Colors.orange,
-                                        ),
-                                        StatCard(
-                                          title: "Total Kelas",
-                                          value: "${stats['total_kelas'] ?? 0}",
-                                          icon: Icons.door_front_door_rounded,
-                                          color: Colors.green,
-                                        ),
-                                        StatCard(
-                                          title: "Total Buku",
-                                          value: "${stats['total_buku'] ?? 0}",
-                                          icon: Icons.menu_book_rounded,
-                                          color: Colors.purple,
-                                        ),
-                                      ],
-                              ),
-                      ),
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: AnnouncementsWidget(),
                   ),
                   const SizedBox(height: 20),
                   Padding(
@@ -263,7 +191,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             icon: Icons.local_library_rounded,
                             label: "Perpus",
                             color: Colors.purple,
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const ELibraryScreen(),
+                                ),
+                              );
+                            },
                           ),
                           ActionMenuItem(
                             icon: Icons.auto_stories_rounded,
@@ -315,6 +250,61 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => const CbtListScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          ActionMenuItem(
+                            icon: Icons.how_to_vote_rounded,
+                            label: "E-Voting",
+                            color: Colors.amber,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const EVotingListScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          ActionMenuItem(
+                            icon: Icons.article_rounded,
+                            label: "Berita",
+                            color: Colors.cyan,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const BeritaListScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          ActionMenuItem(
+                            icon: Icons.assignment_rounded,
+                            label: "E-Raport",
+                            color: Colors.deepOrange,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const ERaportScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          ActionMenuItem(
+                            icon: Icons.gavel_rounded,
+                            label: "Pelanggaran",
+                            color: Colors.red,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const PelanggaranScreen(),
                                 ),
                               );
                             },

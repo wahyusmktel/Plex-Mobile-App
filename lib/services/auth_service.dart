@@ -13,6 +13,12 @@ class AuthService {
     ),
   );
 
+  Dio get dio => _dio;
+
+  Options authOptions(String token) {
+    return Options(headers: {'Authorization': 'Bearer $token'});
+  }
+
   Future<Response> login(
     String login,
     String password,
