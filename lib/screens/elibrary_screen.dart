@@ -212,24 +212,37 @@ class _ELibraryScreenState extends State<ELibraryScreen>
     }
 
     if (_items.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.library_books_rounded,
-              size: 80,
-              color: Colors.grey[300],
+      return RefreshIndicator(
+        onRefresh: _loadCatalog,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Container(
+            height: MediaQuery.of(context).size.height * 0.5,
+            alignment: Alignment.center,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.library_books_rounded,
+                  size: 80,
+                  color: Colors.grey[300],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  "Tidak ada item ditemukan",
+                  style: TextStyle(
+                    color: Colors.grey[500],
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "Tarik ke bawah untuk memuat ulang",
+                  style: TextStyle(color: Colors.grey[400], fontSize: 12),
+                ),
+              ],
             ),
-            const SizedBox(height: 16),
-            Text(
-              "Tidak ada item ditemukan",
-              style: TextStyle(
-                color: Colors.grey[500],
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+          ),
         ),
       );
     }

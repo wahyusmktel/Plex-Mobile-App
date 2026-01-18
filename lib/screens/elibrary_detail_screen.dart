@@ -307,7 +307,7 @@ class _ELibraryDetailScreenState extends State<ELibraryDetailScreen> {
                           ),
                         ),
                         Text(
-                          'Sampai ${borrowingInfo['tanggal_kembali']} (${borrowingInfo['remaining_days']} hari lagi)',
+                          'Sampai ${borrowingInfo['tanggal_kembali']} (${(borrowingInfo['remaining_days'] as num).toInt()} hari lagi)',
                           style: const TextStyle(
                             fontSize: 12,
                             color: Colors.green,

@@ -119,249 +119,259 @@ class _DashboardScreenState extends State<DashboardScreen> {
               onProfileTap: () => setState(() => _selectedIndex = 4),
             ),
             Expanded(
-              child: ListView(
-                padding: const EdgeInsets.only(bottom: 100),
-                children: [
-                  const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(18),
-                      child: AppImageSlider(sliders: auth.sliders),
-                    ),
-                  ),
-                  const SizedBox(height: 18),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: _buildSectionHeader(
-                      "Pengumuman",
-                      "Informasi terbaru",
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: AnnouncementsWidget(),
-                  ),
-                  const SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: _buildSectionHeader(
-                      "Menu Utama",
-                      "Akses cepat fitur",
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Container(
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: AppTheme.surface,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: Colors.black.withOpacity(0.06),
-                        ),
+              child: RefreshIndicator(
+                onRefresh: () async {
+                  await _loadUnreadCount();
+                  await auth.getDashboardStats();
+                },
+                child: ListView(
+                  padding: const EdgeInsets.only(bottom: 100),
+                  children: [
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(18),
+                        child: AppImageSlider(sliders: auth.sliders),
                       ),
-                      child: GridView.count(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        crossAxisCount: 4,
-                        mainAxisSpacing: 14,
-                        crossAxisSpacing: 14,
-                        childAspectRatio: 0.86,
-                        children: [
-                          ActionMenuItem(
-                            icon: user?.role == 'siswa'
-                                ? Icons.how_to_reg_rounded
-                                : Icons.face,
-                            label: user?.role == 'siswa' ? "Absensi" : "Siswa",
-                            color: Colors.blue,
-                            onTap: () {
-                              if (user?.role == 'siswa') {
+                    ),
+                    const SizedBox(height: 18),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: _buildSectionHeader(
+                        "Pengumuman",
+                        "Informasi terbaru",
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: AnnouncementsWidget(),
+                    ),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: _buildSectionHeader(
+                        "Menu Utama",
+                        "Akses cepat fitur",
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: AppTheme.surface,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: Colors.black.withOpacity(0.06),
+                          ),
+                        ),
+                        child: GridView.count(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          crossAxisCount: 4,
+                          mainAxisSpacing: 14,
+                          crossAxisSpacing: 14,
+                          childAspectRatio: 0.86,
+                          children: [
+                            ActionMenuItem(
+                              icon: user?.role == 'siswa'
+                                  ? Icons.how_to_reg_rounded
+                                  : Icons.face,
+                              label: user?.role == 'siswa'
+                                  ? "Absensi"
+                                  : "Siswa",
+                              color: Colors.blue,
+                              onTap: () {
+                                if (user?.role == 'siswa') {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const AttendanceScreen(),
+                                    ),
+                                  );
+                                }
+                              },
+                            ),
+                            ActionMenuItem(
+                              icon: Icons.library_books_rounded,
+                              label: "Mata Pelajaran",
+                              color: Colors.orange,
+                              onTap: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        const AttendanceScreen(),
+                                        const SubjectListScreen(),
                                   ),
                                 );
-                              }
-                            },
-                          ),
-                          ActionMenuItem(
-                            icon: Icons.library_books_rounded,
-                            label: "Mata Pelajaran",
-                            color: Colors.orange,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const SubjectListScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          ActionMenuItem(
-                            icon: Icons.calendar_today_rounded,
-                            label: "Jadwal",
-                            color: Colors.red,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const ScheduleScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          ActionMenuItem(
-                            icon: Icons.score_rounded,
-                            label: "Nilai",
-                            color: Colors.green,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const GradeScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          ActionMenuItem(
-                            icon: Icons.auto_stories_rounded,
-                            label: "E-Learning",
-                            color: Colors.orange,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ELearningListScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          ActionMenuItem(
-                            icon: Icons.collections_bookmark_rounded,
-                            label: "Bank Soal",
-                            color: Colors.indigo,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const BankSoalListScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          ActionMenuItem(
-                            icon: Icons.forum_rounded,
-                            label: "Forum",
-                            color: Colors.teal,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const ForumListScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          ActionMenuItem(
-                            icon: Icons.quiz_rounded,
-                            label: "CBT",
-                            color: Colors.pink,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const CbtListScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          ActionMenuItem(
-                            icon: Icons.how_to_vote_rounded,
-                            label: "E-Voting",
-                            color: Colors.amber,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const EVotingListScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          ActionMenuItem(
-                            icon: Icons.article_rounded,
-                            label: "Berita",
-                            color: Colors.cyan,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const BeritaListScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          ActionMenuItem(
-                            icon: Icons.assignment_rounded,
-                            label: "E-Raport",
-                            color: Colors.deepOrange,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const ERaportScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          ActionMenuItem(
-                            icon: Icons.gavel_rounded,
-                            label: "Pelanggaran",
-                            color: Colors.red,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const PelanggaranScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  if (user?.role == 'siswa') ...[
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: TodayScheduleWidget(
-                        schedules: auth.todaySchedule,
-                        serverTime: auth.serverTime,
-                        onAttendanceTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const AttendanceScreen(),
+                              },
                             ),
-                          );
-                        },
+                            ActionMenuItem(
+                              icon: Icons.calendar_today_rounded,
+                              label: "Jadwal",
+                              color: Colors.red,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ScheduleScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                            ActionMenuItem(
+                              icon: Icons.score_rounded,
+                              label: "Nilai",
+                              color: Colors.green,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const GradeScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                            ActionMenuItem(
+                              icon: Icons.auto_stories_rounded,
+                              label: "E-Learning",
+                              color: Colors.orange,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ELearningListScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                            ActionMenuItem(
+                              icon: Icons.collections_bookmark_rounded,
+                              label: "Bank Soal",
+                              color: Colors.indigo,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const BankSoalListScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                            ActionMenuItem(
+                              icon: Icons.forum_rounded,
+                              label: "Forum",
+                              color: Colors.teal,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ForumListScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                            ActionMenuItem(
+                              icon: Icons.quiz_rounded,
+                              label: "CBT",
+                              color: Colors.pink,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const CbtListScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                            ActionMenuItem(
+                              icon: Icons.how_to_vote_rounded,
+                              label: "E-Voting",
+                              color: Colors.amber,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const EVotingListScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                            ActionMenuItem(
+                              icon: Icons.article_rounded,
+                              label: "Berita",
+                              color: Colors.cyan,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const BeritaListScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                            ActionMenuItem(
+                              icon: Icons.assignment_rounded,
+                              label: "E-Raport",
+                              color: Colors.deepOrange,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const ERaportScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                            ActionMenuItem(
+                              icon: Icons.gavel_rounded,
+                              label: "Pelanggaran",
+                              color: Colors.red,
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const PelanggaranScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: 24),
+                    if (user?.role == 'siswa') ...[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: TodayScheduleWidget(
+                          schedules: auth.todaySchedule,
+                          serverTime: auth.serverTime,
+                          onAttendanceTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const AttendanceScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
           ],
