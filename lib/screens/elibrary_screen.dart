@@ -253,9 +253,9 @@ class _ELibraryScreenState extends State<ELibraryScreen>
         padding: const EdgeInsets.symmetric(horizontal: 16),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          childAspectRatio: 0.65,
+          crossAxisSpacing: 14,
+          mainAxisSpacing: 18,
+          childAspectRatio: 0.62,
         ),
         itemCount: _items.length,
         itemBuilder: (context, index) {
@@ -267,10 +267,8 @@ class _ELibraryScreenState extends State<ELibraryScreen>
   }
 
   Widget _buildItemCard(dynamic item) {
-    final isBorrowed = item['is_borrowed'] == true;
-    final tipe = item['tipe']?.toString() ?? 'ebook';
-
-    return GestureDetector(
+    return _LibraryBookCard(
+      item: item,
       onTap: () async {
         final result = await Navigator.push(
           context,
@@ -281,42 +279,79 @@ class _ELibraryScreenState extends State<ELibraryScreen>
         );
         if (result == true) _loadCatalog();
       },
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppTheme.surface,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 15,
-              offset: const Offset(0, 5),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Stack(
+    );
+  }
+}
+
+class _LibraryBookCard extends StatefulWidget {
+  final dynamic item;
+  final VoidCallback onTap;
+
+  const _LibraryBookCard({
+    required this.item,
+    required this.onTap,
+  });
+
+  @override
+  State<_LibraryBookCard> createState() => _LibraryBookCardState();
+}
+
+class _LibraryBookCardState extends State<_LibraryBookCard> {
+  bool _hovered = false;
+
+  void _setHovered(bool value) {
+    if (_hovered == value) return;
+    setState(() => _hovered = value);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final item = widget.item;
+    final tipe = item['tipe']?.toString() ?? 'ebook';
+    final isBorrowed = item['is_borrowed'] == true;
+    final coverUrl = item['cover_url'];
+
+    return MouseRegion(
+      onEnter: (_) => _setHovered(true),
+      onExit: (_) => _setHovered(false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        onLongPressStart: (_) => _setHovered(true),
+        onLongPressEnd: (_) => _setHovered(false),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+          decoration: BoxDecoration(
+            color: AppTheme.surface,
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(_hovered ? 0.12 : 0.06),
+                blurRadius: _hovered ? 18 : 12,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(18),
+            child: Stack(
               children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(20),
-                  ),
-                  child: item['cover_url'] != null
+                Positioned.fill(
+                  child: coverUrl != null
                       ? Image.network(
-                          item['cover_url'],
-                          height: 150,
-                          width: double.infinity,
+                          coverUrl,
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) =>
                               _buildPlaceholderCover(tipe),
                         )
                       : _buildPlaceholderCover(tipe),
                 ),
-                if (isBorrowed)
-                  Positioned(
-                    top: 8,
-                    right: 8,
+                Positioned(
+                  top: 10,
+                  right: 10,
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 200),
+                    opacity: isBorrowed ? 1 : 0,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8,
@@ -336,115 +371,143 @@ class _ELibraryScreenState extends State<ELibraryScreen>
                       ),
                     ),
                   ),
-              ],
-            ),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item['judul'] ?? 'Untitled',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.textPrimary,
+                ),
+                AnimatedOpacity(
+                  duration: const Duration(milliseconds: 200),
+                  opacity: _hovered ? 1 : 0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black.withOpacity(0.05),
+                          Colors.black.withOpacity(0.75),
+                        ],
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
                     ),
-                    const Spacer(),
-                    Text(
-                      item['penulis'] ?? 'Unknown',
-                      style: TextStyle(fontSize: 11, color: Colors.grey[500]),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Icon(
-                          _getTypeIcon(tipe),
-                          size: 12,
-                          color: Colors.deepPurple,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          _getTypeInfo(item),
-                          style: const TextStyle(
-                            fontSize: 10,
-                            color: Colors.deepPurple,
+                  ),
+                ),
+                AnimatedPositioned(
+                  duration: const Duration(milliseconds: 220),
+                  curve: Curves.easeOut,
+                  left: 0,
+                  right: 0,
+                  bottom: _hovered ? 0 : -24,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 200),
+                      opacity: _hovered ? 1 : 0,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item['judul'] ?? 'Untitled',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                        if (item['kategori'] != null) ...[
-                          const Spacer(),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 2,
+                          const SizedBox(height: 4),
+                          Text(
+                            item['penulis'] ?? 'Unknown',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Colors.white.withOpacity(0.85),
                             ),
-                            decoration: BoxDecoration(
-                              color: Colors.deepPurple.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              item['kategori'].toString().toUpperCase(),
-                              style: const TextStyle(
-                                fontSize: 8,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.deepPurple,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Icon(
+                                _getTypeIcon(tipe),
+                                size: 12,
+                                color: Colors.white,
                               ),
-                            ),
+                              const SizedBox(width: 4),
+                              Text(
+                                _getTypeInfo(item),
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              if (item['kategori'] != null) ...[
+                                const Spacer(),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withOpacity(0.18),
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(
+                                    item['kategori'].toString().toUpperCase(),
+                                    style: const TextStyle(
+                                      fontSize: 8,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
                           ),
                         ],
-                      ],
+                      ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildPlaceholderCover(String tipe) {
-    return Container(
-      height: 150,
-      color: Colors.deepPurple.withOpacity(0.1),
-      child: Center(
-        child: Icon(
-          _getTypeIcon(tipe),
-          size: 50,
-          color: Colors.deepPurple.withOpacity(0.5),
-        ),
+Widget _buildPlaceholderCover(String tipe) {
+  return Container(
+    color: Colors.deepPurple.withOpacity(0.1),
+    child: Center(
+      child: Icon(
+        _getTypeIcon(tipe),
+        size: 50,
+        color: Colors.deepPurple.withOpacity(0.5),
       ),
-    );
-  }
+    ),
+  );
+}
 
-  IconData _getTypeIcon(String tipe) {
-    switch (tipe) {
-      case 'audiobook':
-        return Icons.headphones_rounded;
-      case 'videobook':
-        return Icons.video_library_rounded;
-      default:
-        return Icons.menu_book_rounded;
-    }
+IconData _getTypeIcon(String tipe) {
+  switch (tipe) {
+    case 'audiobook':
+      return Icons.headphones_rounded;
+    case 'videobook':
+      return Icons.video_library_rounded;
+    default:
+      return Icons.menu_book_rounded;
   }
+}
 
-  String _getTypeInfo(dynamic item) {
-    final tipe = item['tipe']?.toString() ?? 'ebook';
-    switch (tipe) {
-      case 'audiobook':
-      case 'videobook':
-        final durasi = item['durasi'] ?? 0;
-        return '$durasi menit';
-      default:
-        final halaman = item['jumlah_halaman'] ?? 0;
-        return '$halaman halaman';
-    }
+String _getTypeInfo(dynamic item) {
+  final tipe = item['tipe']?.toString() ?? 'ebook';
+  switch (tipe) {
+    case 'audiobook':
+    case 'videobook':
+      final durasi = item['durasi'] ?? 0;
+      return '$durasi menit';
+    default:
+      final halaman = item['jumlah_halaman'] ?? 0;
+      return '$halaman halaman';
   }
 }
