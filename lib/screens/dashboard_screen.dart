@@ -10,7 +10,6 @@ import '../widgets/dashboard_header.dart';
 import '../widgets/app_image_slider.dart';
 import '../widgets/dashboard_skeleton.dart';
 
-import '../widgets/action_menu_item.dart';
 import '../widgets/today_schedule_widget.dart';
 import 'profile_screen.dart';
 import 'attendance_screen.dart';
@@ -164,30 +163,39 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Container(
-                        padding: const EdgeInsets.all(14),
+                        padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: AppTheme.surface,
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(22),
                           border: Border.all(
-                            color: Colors.black.withOpacity(0.06),
+                            color: Colors.black.withOpacity(0.05),
                           ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.04),
+                              blurRadius: 14,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
                         ),
                         child: GridView.count(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           crossAxisCount: 4,
-                          mainAxisSpacing: 14,
-                          crossAxisSpacing: 14,
-                          childAspectRatio: 0.86,
+                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 10,
+                          childAspectRatio: 0.9,
                           children: [
-                            ActionMenuItem(
+                            _buildQuickMenuGridItem(
                               icon: user?.role == 'siswa'
                                   ? Icons.how_to_reg_rounded
                                   : Icons.face,
-                              label: user?.role == 'siswa'
-                                  ? "Absensi"
-                                  : "Siswa",
-                              color: Colors.blue,
+                              label:
+                                  user?.role == 'siswa' ? "Absensi" : "Siswa",
+                              colors: const [
+                                Color(0xFF4F8DF7),
+                                Color(0xFF6FB1FC),
+                              ],
                               onTap: () {
                                 if (user?.role == 'siswa') {
                                   Navigator.push(
@@ -200,10 +208,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 }
                               },
                             ),
-                            ActionMenuItem(
+                            _buildQuickMenuGridItem(
                               icon: Icons.library_books_rounded,
                               label: "Mata Pelajaran",
-                              color: Colors.orange,
+                              colors: const [
+                                Color(0xFFFFB347),
+                                Color(0xFFFFCC80),
+                              ],
                               onTap: () {
                                 Navigator.push(
                                   context,
@@ -214,10 +225,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 );
                               },
                             ),
-                            ActionMenuItem(
+                            _buildQuickMenuGridItem(
                               icon: Icons.calendar_today_rounded,
                               label: "Jadwal",
-                              color: Colors.red,
+                              colors: const [
+                                Color(0xFFF45D48),
+                                Color(0xFFFF8A65),
+                              ],
                               onTap: () {
                                 Navigator.push(
                                   context,
@@ -228,23 +242,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 );
                               },
                             ),
-                            ActionMenuItem(
+                            _buildQuickMenuGridItem(
                               icon: Icons.score_rounded,
                               label: "Nilai",
-                              color: Colors.green,
+                              colors: const [
+                                Color(0xFF26A69A),
+                                Color(0xFF4DB6AC),
+                              ],
                               onTap: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const GradeScreen(),
+                                    builder: (context) =>
+                                        const GradeScreen(),
                                   ),
                                 );
                               },
                             ),
-                            ActionMenuItem(
+                            _buildQuickMenuGridItem(
                               icon: Icons.auto_stories_rounded,
                               label: "E-Learning",
-                              color: Colors.orange,
+                              colors: const [
+                                Color(0xFF7E57C2),
+                                Color(0xFFB39DDB),
+                              ],
                               onTap: () {
                                 Navigator.push(
                                   context,
@@ -255,10 +276,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 );
                               },
                             ),
-                            ActionMenuItem(
+                            _buildQuickMenuGridItem(
                               icon: Icons.collections_bookmark_rounded,
                               label: "Bank Soal",
-                              color: Colors.indigo,
+                              colors: const [
+                                Color(0xFF3F51B5),
+                                Color(0xFF7986CB),
+                              ],
                               onTap: () {
                                 Navigator.push(
                                   context,
@@ -269,10 +293,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 );
                               },
                             ),
-                            ActionMenuItem(
+                            _buildQuickMenuGridItem(
                               icon: Icons.forum_rounded,
                               label: "Forum",
-                              color: Colors.teal,
+                              colors: const [
+                                Color(0xFF009688),
+                                Color(0xFF4DB6AC),
+                              ],
                               onTap: () {
                                 Navigator.push(
                                   context,
@@ -283,23 +310,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 );
                               },
                             ),
-                            ActionMenuItem(
+                            _buildQuickMenuGridItem(
                               icon: Icons.quiz_rounded,
                               label: "CBT",
-                              color: Colors.pink,
+                              colors: const [
+                                Color(0xFFE91E63),
+                                Color(0xFFF06292),
+                              ],
                               onTap: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const CbtListScreen(),
+                                    builder: (context) =>
+                                        const CbtListScreen(),
                                   ),
                                 );
                               },
                             ),
-                            ActionMenuItem(
+                            _buildQuickMenuGridItem(
                               icon: Icons.how_to_vote_rounded,
                               label: "E-Voting",
-                              color: Colors.amber,
+                              colors: const [
+                                Color(0xFFFFB300),
+                                Color(0xFFFFD54F),
+                              ],
                               onTap: () {
                                 Navigator.push(
                                   context,
@@ -310,10 +344,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 );
                               },
                             ),
-                            ActionMenuItem(
+                            _buildQuickMenuGridItem(
                               icon: Icons.article_rounded,
                               label: "Berita",
-                              color: Colors.cyan,
+                              colors: const [
+                                Color(0xFF26C6DA),
+                                Color(0xFF80DEEA),
+                              ],
                               onTap: () {
                                 Navigator.push(
                                   context,
@@ -324,23 +361,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 );
                               },
                             ),
-                            ActionMenuItem(
+                            _buildQuickMenuGridItem(
                               icon: Icons.assignment_rounded,
                               label: "E-Raport",
-                              color: Colors.deepOrange,
+                              colors: const [
+                                Color(0xFFFF7043),
+                                Color(0xFFFFAB91),
+                              ],
                               onTap: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const ERaportScreen(),
+                                    builder: (context) =>
+                                        const ERaportScreen(),
                                   ),
                                 );
                               },
                             ),
-                            ActionMenuItem(
+                            _buildQuickMenuGridItem(
                               icon: Icons.gavel_rounded,
                               label: "Pelanggaran",
-                              color: Colors.red,
+                              colors: const [
+                                Color(0xFFEF5350),
+                                Color(0xFFE57373),
+                              ],
                               onTap: () {
                                 Navigator.push(
                                   context,
@@ -414,6 +458,73 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildQuickMenuGridItem({
+    required IconData icon,
+    required String label,
+    List<Color>? colors,
+    required VoidCallback onTap,
+  }) {
+    final baseColor = colors?.isNotEmpty == true
+        ? colors!.first
+        : AppTheme.primary;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Ink(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: colors ??
+                  [
+                    baseColor.withOpacity(0.9),
+                    baseColor.withOpacity(0.6),
+                  ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 10,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.18),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(icon, color: Colors.white, size: 20),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 11,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
