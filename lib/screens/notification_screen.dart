@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../theme/app_theme.dart';
+import 'forum_topic_detail_screen.dart';
+import 'berita_detail_screen.dart';
+import 'pengumuman_detail_screen.dart';
+import 'pelanggaran_screen.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -260,8 +264,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
               ),
             ],
           ),
-          onTap: () {
-            if (!isRead) _markAsRead(item['id'], index);
+          onTap: () async {
+            if (!isRead) {
+              await _markAsRead(item['id'], index);
+            }
             // Handle actions based on action_type
             _handleNotificationAction(item);
           },
@@ -301,7 +307,85 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   void _handleNotificationAction(dynamic item) {
-    // Navigate based on action_type
-    debugPrint("Action Type: ${item['action_type']}");
+    final actionType = item['action_type'];
+    final actionId = item['action_id'];
+
+    if (actionType == null) return;
+
+    switch (actionType) {
+      case 'forum_topic':
+        if (actionId != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  ForumTopicDetailScreen(topicId: actionId.toString()),
+            ),
+          );
+        }
+        break;
+      case 'news_detail':
+        if (actionId != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  BeritaDetailScreen(beritaId: actionId.toString()),
+            ),
+          );
+        }
+        break;
+      case 'announcement_detail':
+        if (actionId != null) {
+          _fetchAndNavigateToAnnouncement(actionId.toString());
+        }
+        break;
+      case 'announcement_list':
+        // Old action_type support
+        break;
+      case 'violation_list':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const PelanggaranScreen()),
+        );
+        break;
+      default:
+        debugPrint("Unhandled action type: $actionType");
+    }
+  }
+
+  Future<void> _fetchAndNavigateToAnnouncement(String id) async {
+    setState(() => _isLoading = true);
+    try {
+      final auth = Provider.of<AuthProvider>(context, listen: false);
+      final response = await auth.authService.dio.get(
+        '/student/pengumuman/$id',
+        options: auth.authService.authOptions(auth.token!),
+      );
+
+      if (mounted &&
+          response.statusCode == 200 &&
+          response.data != null &&
+          response.data['success'] == true) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PengumumanDetailScreen(
+              pengumuman: Map<String, dynamic>.from(response.data['data']),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        debugPrint("Error fetching announcement for deep link: $e");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Gagal memuat detail pengumuman")),
+        );
+      }
+    }
+    if (mounted) {
+      setState(() => _isLoading = false);
+    }
   }
 }
