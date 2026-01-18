@@ -56,6 +56,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         children: [
           _buildHome(),
           const CalendarScreen(),
+          const ELibraryScreen(),
           _buildPlaceholder("Halaman Notifikasi"),
           const ProfileScreen(),
         ],
@@ -183,19 +184,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => const GradeScreen(),
-                                ),
-                              );
-                            },
-                          ),
-                          ActionMenuItem(
-                            icon: Icons.local_library_rounded,
-                            label: "Perpus",
-                            color: Colors.purple,
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const ELibraryScreen(),
                                 ),
                               );
                             },
