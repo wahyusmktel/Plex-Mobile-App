@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../providers/auth_provider.dart';
 import '../theme/app_theme.dart';
+import 'pdf_reader_screen.dart';
+import 'audio_player_screen.dart';
+import 'video_player_screen.dart';
 
 class ELibraryReaderScreen extends StatefulWidget {
   final String itemId;
@@ -22,6 +24,8 @@ class ELibraryReaderScreen extends StatefulWidget {
 
 class _ELibraryReaderScreenState extends State<ELibraryReaderScreen> {
   String? _fileUrl;
+  String? _coverUrl;
+  String? _author;
   bool _isLoading = true;
   int? _remainingDays;
 
@@ -42,8 +46,13 @@ class _ELibraryReaderScreenState extends State<ELibraryReaderScreen> {
       if (response.statusCode == 200 && response.data['success'] == true) {
         setState(() {
           _fileUrl = response.data['data']['file_url'];
-          _remainingDays = response.data['data']['remaining_days'];
+          _coverUrl = response.data['data']['cover_url'];
+          _author = response.data['data']['penulis'];
+          final days = response.data['data']['remaining_days'];
+          _remainingDays = days is num ? days.toInt() : null;
         });
+        // Automatically open the specific reader
+        _openReader();
       } else {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -63,12 +72,27 @@ class _ELibraryReaderScreenState extends State<ELibraryReaderScreen> {
     setState(() => _isLoading = false);
   }
 
-  Future<void> _openInBrowser() async {
+  void _openReader() {
     if (_fileUrl == null) return;
-    final uri = Uri.parse(_fileUrl!);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+
+    Widget screen;
+    switch (widget.tipe) {
+      case 'audiobook':
+        screen = AudioPlayerScreen(
+          audioUrl: _fileUrl!,
+          title: widget.judul,
+          coverUrl: _coverUrl,
+          author: _author,
+        );
+        break;
+      case 'videobook':
+        screen = VideoPlayerScreen(videoUrl: _fileUrl!, title: widget.judul);
+        break;
+      default:
+        screen = PDFReaderScreen(pdfUrl: _fileUrl!, title: widget.judul);
     }
+
+    Navigator.push(context, MaterialPageRoute(builder: (context) => screen));
   }
 
   @override
@@ -154,7 +178,7 @@ class _ELibraryReaderScreenState extends State<ELibraryReaderScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: _openInBrowser,
+                onPressed: _openReader,
                 icon: Icon(_getActionIcon(), color: Colors.white),
                 label: Text(
                   _getActionLabel(),
@@ -174,7 +198,7 @@ class _ELibraryReaderScreenState extends State<ELibraryReaderScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Konten akan dibuka di browser',
+              'Konten akan dibuka dengan viewer Literasia',
               style: TextStyle(fontSize: 12, color: Colors.grey[500]),
             ),
           ],
