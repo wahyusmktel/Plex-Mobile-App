@@ -32,7 +32,7 @@ class FloatingNavbar extends StatelessWidget {
         children: [
           _buildNavItem(0, Icons.dashboard_rounded, "Beranda"),
           _buildNavItem(1, Icons.calendar_month_rounded, "Kalender"),
-          _buildNavItem(2, Icons.local_library_rounded, "Perpus"),
+          _buildNavItem(2, Icons.local_library_rounded, "E-Library"),
           _buildNavItem(3, Icons.notifications_rounded, "Notif"),
           _buildNavItem(4, Icons.person_rounded, "Profil"),
         ],

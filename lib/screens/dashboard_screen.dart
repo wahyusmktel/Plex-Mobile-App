@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +26,7 @@ import 'eraport_screen.dart';
 import 'pelanggaran_screen.dart';
 import 'elibrary_screen.dart';
 import 'calendar_screen.dart';
+import 'notification_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -35,13 +37,49 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
+  int _unreadCount = 0;
+  Timer? _unreadTimer;
+  Future<void> _loadUnreadCount() async {
+    try {
+      final auth = Provider.of<AuthProvider>(context, listen: false);
+      if (auth.token == null) return;
+
+      final response = await auth.authService.dio.get(
+        '/student/notifications/unread-count',
+        options: auth.authService.authOptions(auth.token!),
+      );
+
+      if (mounted &&
+          response.statusCode == 200 &&
+          response.data != null &&
+          response.data['success'] == true) {
+        setState(() {
+          _unreadCount = response.data['data']['unread_count'] ?? 0;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        debugPrint("Error loading unread count: $e");
+      }
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    _loadUnreadCount();
+    _unreadTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      _loadUnreadCount();
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<AuthProvider>(context, listen: false).getDashboardStats();
     });
+  }
+
+  @override
+  void dispose() {
+    _unreadTimer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -57,7 +95,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           _buildHome(),
           const CalendarScreen(),
           const ELibraryScreen(),
-          _buildPlaceholder("Halaman Notifikasi"),
+          const NotificationScreen(),
           const ProfileScreen(),
         ],
       ),
@@ -75,7 +113,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             DashboardHeader(
               userName: user?.name ?? "User",
               schoolName: user?.schoolName ?? user?.role ?? "Literasia",
-              onProfileTap: () => setState(() => _selectedIndex = 3),
+              unreadCount: _unreadCount,
+              onNotificationTap: () => setState(() => _selectedIndex = 3),
+              onProfileTap: () => setState(() => _selectedIndex = 4),
             ),
             Expanded(
               child: ListView(
@@ -333,31 +373,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return FloatingNavbar(
       selectedIndex: _selectedIndex,
       onTap: (index) => setState(() => _selectedIndex = index),
-    );
-  }
-
-  Widget _buildPlaceholder(String title) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.construction_rounded, size: 80, color: Colors.grey[400]),
-          const SizedBox(height: 20),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[600],
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            "Fitur ini sedang dalam pengembangan",
-            style: TextStyle(color: Colors.grey[500]),
-          ),
-        ],
-      ),
     );
   }
 
