@@ -16,6 +16,7 @@ import 'subject_list_screen.dart';
 import 'schedule_screen.dart';
 import 'grade_screen.dart';
 import 'e_learning_list_screen.dart';
+import 'bank_soal_list_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -277,10 +278,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             },
                           ),
                           ActionMenuItem(
-                            icon: Icons.analytics_rounded,
-                            label: "Laporan",
+                            icon: Icons.collections_bookmark_rounded,
+                            label: "Bank Soal",
                             color: Colors.indigo,
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const BankSoalListScreen(),
+                                ),
+                              );
+                            },
                           ),
                           ActionMenuItem(
                             icon: Icons.grid_view_rounded,

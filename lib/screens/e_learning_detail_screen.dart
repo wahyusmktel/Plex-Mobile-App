@@ -64,6 +64,8 @@ class _ELearningDetailScreenState extends State<ELearningDetailScreen> {
       expandedHeight: 200,
       pinned: true,
       backgroundColor: AppTheme.primary,
+      foregroundColor: Colors.white,
+      iconTheme: const IconThemeData(color: Colors.white),
       flexibleSpace: FlexibleSpaceBar(
         title: Text(
           course.title,

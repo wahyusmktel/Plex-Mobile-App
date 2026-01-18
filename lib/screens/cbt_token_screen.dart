@@ -99,46 +99,82 @@ class _CbtTokenScreenState extends State<CbtTokenScreen> {
 
                 // Token Input Box
                 Container(
-                  padding: const EdgeInsets.all(24),
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 32,
+                    horizontal: 24,
+                  ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(24),
+                    color: const Color(
+                      0xFF1A1D29,
+                    ), // Slightly lighter than background
+                    borderRadius: BorderRadius.circular(28),
                     border: Border.all(
                       color: _isError
-                          ? Colors.red
-                          : Colors.white.withOpacity(0.1),
+                          ? Colors.red.withOpacity(0.5)
+                          : Colors.white.withOpacity(0.08),
+                      width: 1.5,
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
                   ),
                   child: Column(
                     children: [
                       Text(
-                        "GUNAKAN TOKEN INI",
+                        "MASUKKAN TOKEN AKSES",
                         style: TextStyle(
-                          color: Colors.white.withOpacity(0.3),
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 2,
+                          color: Colors.white.withOpacity(0.4),
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 3,
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 24),
                       TextField(
                         controller: _tokenController,
                         textAlign: TextAlign.center,
                         textCapitalization: TextCapitalization.characters,
-                        cursorColor: Colors.white,
+                        cursorColor: const Color(0xFFBA80E8),
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 8,
+                          fontSize: 36,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 12,
                         ),
-                        decoration: const InputDecoration(
-                          hintText: "_____",
-                          hintStyle: TextStyle(color: Colors.white24),
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          focusedBorder: InputBorder.none,
-                          contentPadding: EdgeInsets.zero,
+                        decoration: InputDecoration(
+                          hintText: "•••••",
+                          hintStyle: TextStyle(
+                            color: Colors.white.withOpacity(0.1),
+                            letterSpacing: 4,
+                          ),
+                          filled: true,
+                          fillColor: Colors.white.withOpacity(0.03),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: BorderSide(
+                              color: Colors.white.withOpacity(0.05),
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: const BorderSide(
+                              color: Color(0xFFBA80E8),
+                              width: 2,
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 16,
+                            horizontal: 20,
+                          ),
                         ),
                         onChanged: (val) {
                           if (_isError && val.isNotEmpty) {

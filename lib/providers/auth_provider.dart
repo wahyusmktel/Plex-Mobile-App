@@ -9,6 +9,7 @@ import '../models/subject_model.dart';
 import '../models/grade_model.dart';
 import '../models/e_learning_model.dart';
 import '../models/cbt_model.dart';
+import '../models/bank_soal_model.dart';
 import '../services/auth_service.dart';
 
 class AuthProvider with ChangeNotifier {
@@ -24,6 +25,8 @@ class AuthProvider with ChangeNotifier {
   List<GradeModel> _grades = [];
   List<ELearningModel> _elearningCourses = [];
   ELearningModel? _selectedCourse;
+  List<BankSoalModel> _bankSoals = [];
+  BankSoalModel? _selectedBankSoal;
   String? _serverTime;
 
   UserModel? get user => _user;
@@ -37,6 +40,8 @@ class AuthProvider with ChangeNotifier {
   List<GradeModel> get grades => _grades;
   List<ELearningModel> get elearningCourses => _elearningCourses;
   ELearningModel? get selectedCourse => _selectedCourse;
+  List<BankSoalModel> get bankSoals => _bankSoals;
+  BankSoalModel? get selectedBankSoal => _selectedBankSoal;
   String? get serverTime => _serverTime;
   bool get isAuthenticated => _token != null;
 
@@ -445,6 +450,47 @@ class AuthProvider with ChangeNotifier {
         message = e.response?.data['message'] ?? message;
       }
       return {'success': false, 'message': message};
+    }
+  }
+
+  Future<void> fetchBankSoals() async {
+    if (_token == null) return;
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _authService.getBankSoals(_token!);
+      if (response.statusCode == 200 && response.data['success']) {
+        final List<dynamic>? data = response.data['data'];
+        if (data != null) {
+          _bankSoals = data
+              .map((json) => BankSoalModel.fromJson(json))
+              .toList();
+        }
+      }
+    } catch (e) {
+      debugPrint("Error fetching bank soals: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchBankSoalDetail(String id) async {
+    if (_token == null) return;
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await _authService.getBankSoalDetail(_token!, id);
+      if (response.statusCode == 200 && response.data['success']) {
+        _selectedBankSoal = BankSoalModel.fromJson(response.data['data']);
+      }
+    } catch (e) {
+      debugPrint("Error fetching bank soal detail: $e");
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 }

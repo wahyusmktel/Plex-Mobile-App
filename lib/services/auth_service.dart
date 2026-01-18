@@ -285,4 +285,26 @@ class AuthService {
       rethrow;
     }
   }
+
+  Future<Response> getBankSoals(String token) async {
+    try {
+      return await _dio.get(
+        '/student/bank-soal',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> getBankSoalDetail(String token, String id) async {
+    try {
+      return await _dio.get(
+        '/student/bank-soal/$id',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
