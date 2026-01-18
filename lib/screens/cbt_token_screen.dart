@@ -3,14 +3,14 @@ import 'cbt_exam_screen.dart';
 
 class CbtTokenScreen extends StatefulWidget {
   final String cbtId;
-  final String moduleId;
-  final String cbtName;
+  final String? moduleId;
+  final String? cbtName;
 
   const CbtTokenScreen({
     super.key,
     required this.cbtId,
-    required this.moduleId,
-    required this.cbtName,
+    this.moduleId,
+    this.cbtName,
   });
 
   @override
@@ -74,7 +74,7 @@ class _CbtTokenScreenState extends State<CbtTokenScreen> {
 
                 // Title
                 Text(
-                  widget.cbtName,
+                  widget.cbtName ?? 'CBT',
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     color: Colors.white,

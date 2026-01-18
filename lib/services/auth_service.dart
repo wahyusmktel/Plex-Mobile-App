@@ -341,6 +341,17 @@ class AuthService {
     }
   }
 
+  Future<Response> getCbtList(String token) async {
+    try {
+      return await _dio.get(
+        '/student/cbt/list',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<Response> postForumReply(
     String token,
     String topicId,

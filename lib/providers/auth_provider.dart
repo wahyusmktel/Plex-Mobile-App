@@ -15,6 +15,8 @@ import '../services/auth_service.dart';
 
 class AuthProvider with ChangeNotifier {
   final AuthService _authService = AuthService();
+  AuthService get authService => _authService;
+
   UserModel? _user;
   String? _token;
   bool _isLoading = false;

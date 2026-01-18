@@ -18,6 +18,7 @@ import 'grade_screen.dart';
 import 'e_learning_list_screen.dart';
 import 'bank_soal_list_screen.dart';
 import 'forum_list_screen.dart';
+import 'cbt_list_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -301,6 +302,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => const ForumListScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          ActionMenuItem(
+                            icon: Icons.quiz_rounded,
+                            label: "CBT",
+                            color: Colors.pink,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const CbtListScreen(),
                                 ),
                               );
                             },

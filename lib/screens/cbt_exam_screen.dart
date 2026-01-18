@@ -6,13 +6,13 @@ import '../models/cbt_model.dart';
 
 class CbtExamScreen extends StatefulWidget {
   final String cbtId;
-  final String moduleId;
+  final String? moduleId;
   final String token;
 
   const CbtExamScreen({
     super.key,
     required this.cbtId,
-    required this.moduleId,
+    this.moduleId,
     required this.token,
   });
 
