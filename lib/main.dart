@@ -21,7 +21,7 @@ class LiterasiaApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Literasia App',
+      title: 'Literasia Edutekno Digital',
       theme: AppTheme.light,
       home: Consumer<AuthProvider>(
         builder: (context, auth, _) {

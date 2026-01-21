@@ -34,6 +34,14 @@ class AuthService {
     }
   }
 
+  Future<Response> getAppSettings() async {
+    try {
+      return await _dio.get(ApiConstants.appSettings);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<Response> registerSchool(Map<String, dynamic> data) async {
     try {
       return await _dio.post(ApiConstants.registerSchool, data: data);

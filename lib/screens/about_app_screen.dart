@@ -27,7 +27,7 @@ class AboutAppScreen extends StatelessWidget {
                 boxShadow: AppTheme.primaryShadow,
               ),
               child: Image.asset(
-                'assets/images/logo.png', // Assuming logo exists, if not use icon
+                'assets/logo-nobg.png', // Updated logo path
                 width: 100,
                 height: 100,
                 errorBuilder: (context, error, stackTrace) => const Icon(
@@ -39,9 +39,10 @@ class AboutAppScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             const Text(
-              "Literasia",
+              "Literasia Edutekno Digital",
+              textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 28,
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: AppTheme.primary,
                 letterSpacing: 1.2,

@@ -35,6 +35,7 @@ class AuthProvider with ChangeNotifier {
   ForumTopicModel? _selectedTopic;
   String? _serverTime;
   Map<String, dynamic>? _profileData;
+  bool _isRegistrationEnabled = true;
 
   UserModel? get user => _user;
   String? get token => _token;
@@ -54,10 +55,12 @@ class AuthProvider with ChangeNotifier {
   ForumTopicModel? get selectedTopic => _selectedTopic;
   String? get serverTime => _serverTime;
   Map<String, dynamic>? get profileData => _profileData;
+  bool get isRegistrationEnabled => _isRegistrationEnabled;
   bool get isAuthenticated => _token != null;
 
   AuthProvider() {
     _loadStoredData();
+    fetchAppSettings();
   }
 
   Future<void> _loadStoredData() async {
@@ -68,6 +71,19 @@ class AuthProvider with ChangeNotifier {
       _user = UserModel.fromJson(jsonDecode(userJson));
     }
     notifyListeners();
+  }
+
+  Future<void> fetchAppSettings() async {
+    try {
+      final response = await _authService.getAppSettings();
+      if (response.statusCode == 200 && response.data['status'] == 'success') {
+        _isRegistrationEnabled =
+            response.data['data']['school_registration_enabled'] ?? true;
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint("Error fetching app settings: $e");
+    }
   }
 
   Future<bool> login(String login, String password, String deviceName) async {

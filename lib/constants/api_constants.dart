@@ -4,7 +4,9 @@ class ApiConstants {
 
   // Auth Endpoints
   static const String login = '/login';
+  static const String appSettings = '/app-settings';
   static const String registerSchool = '/register-school';
+
   static const String logout = '/logout';
   static const String user = '/user';
   static const String dashboardStats = '/dashboard-stats';

@@ -72,10 +72,10 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 20),
-                const Icon(
-                  Icons.local_library_rounded,
-                  size: 80,
-                  color: AppTheme.primary,
+                Image.asset(
+                  'assets/logo-nobg.png',
+                  height: 120,
+                  fit: BoxFit.contain,
                 ),
                 const SizedBox(height: 24),
                 const Text(
@@ -132,33 +132,36 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 24),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Belum punya akun? ",
-                      style: TextStyle(color: AppTheme.textSecondary),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const RegisterSchoolScreen(),
+                if (authProvider.isRegistrationEnabled) ...[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Belum punya akun? ",
+                        style: TextStyle(color: AppTheme.textSecondary),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const RegisterSchoolScreen(),
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          "Daftar",
+                          style: TextStyle(
+                            color: AppTheme.primary,
+                            fontWeight: FontWeight.bold,
                           ),
-                        );
-                      },
-                      child: const Text(
-                        "Daftar",
-                        style: TextStyle(
-                          color: AppTheme.primary,
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                ],
               ],
             ),
           ),
