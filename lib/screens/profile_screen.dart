@@ -10,6 +10,7 @@ import 'edit_profile_screen.dart';
 import 'security_screen.dart';
 import 'notification_settings_screen.dart';
 import 'about_app_screen.dart';
+import 'app_settings_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -117,6 +118,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             );
                           },
                         ),
+                        if (user?.role == 'dinas')
+                          ProfileMenuItem(
+                            icon: Icons.settings_applications_rounded,
+                            title: "Pengaturan Aplikasi",
+                            subtitle: "Atur identitas global aplikasi",
+                            color: Colors.blueGrey,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const AppSettingsScreen(),
+                                ),
+                              );
+                            },
+                          ),
                         const SizedBox(height: 25),
                         _buildSectionHeader(
                           "Informasi Lainnya",

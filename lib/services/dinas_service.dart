@@ -461,4 +461,46 @@ class DinasService {
     }
     return {'success': false, 'message': 'Gagal menghapus agenda'};
   }
+
+  // App Settings
+  Future<Map<String, dynamic>> getAppSettings() async {
+    try {
+      final response = await _dio.get('/app-settings', options: _options);
+      if (response.statusCode == 200 && response.data['status'] == 'success') {
+        return {'success': true, 'data': response.data['data']};
+      }
+    } catch (e) {
+      print("Error fetching app settings: $e");
+    }
+    return {'success': false, 'message': 'Gagal mengambil pengaturan aplikasi'};
+  }
+
+  Future<Map<String, dynamic>> updateAppSettings(FormData data) async {
+    try {
+      final response = await _dio.post(
+        '/dinas/app-settings',
+        data: data,
+        options: _options,
+      );
+      if (response.statusCode == 200 && response.data['status'] == 'success') {
+        return {
+          'success': true,
+          'message': response.data['message'],
+          'data': response.data['data'],
+        };
+      }
+    } catch (e) {
+      if (e is DioException && e.response?.data != null) {
+        return {
+          'success': false,
+          'message': e.response?.data['message'] ?? e.toString(),
+        };
+      }
+      return {'success': false, 'message': e.toString()};
+    }
+    return {
+      'success': false,
+      'message': 'Gagal memperbarui pengaturan aplikasi',
+    };
+  }
 }
