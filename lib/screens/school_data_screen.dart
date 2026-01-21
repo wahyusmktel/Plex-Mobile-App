@@ -110,8 +110,9 @@ class _SchoolDataScreenState extends State<SchoolDataScreen> {
       builder: (context) => AlertDialog(
         title: const Text("Reset Password Admin"),
         content: Text(
-          "Apakah Anda yakin ingin meriset password admin untuk ${school.namaSekolah}? Password akan diubah menjadi 'password'.",
+          "Apakah Anda yakin ingin meriset password admin untuk ${school.namaSekolah}? Password akan diubah menjadi NPSN (${school.npsn}).",
         ),
+
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
