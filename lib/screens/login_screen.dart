@@ -148,6 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 24),
 
+                /*
                 if (authProvider.isRegistrationEnabled) ...[
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -178,6 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 20),
                 ],
+                */
               ],
             ),
           ),
