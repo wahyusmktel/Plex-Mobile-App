@@ -28,6 +28,7 @@ import 'elibrary_screen.dart';
 import 'calendar_screen.dart';
 import 'notification_screen.dart';
 import 'school_management_screen.dart';
+import 'student_statistics_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -224,22 +225,37 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               },
                             ),
                             _buildQuickMenuGridItem(
-                              icon: Icons.library_books_rounded,
-                              label: "Mata Pelajaran",
+                              icon: user?.role == 'dinas'
+                                  ? Icons.bar_chart_rounded
+                                  : Icons.library_books_rounded,
+                              label: user?.role == 'dinas'
+                                  ? "Statistik Siswa"
+                                  : "Mata Pelajaran",
                               colors: const [
                                 Color(0xFFFFB347),
                                 Color(0xFFFFCC80),
                               ],
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const SubjectListScreen(),
-                                  ),
-                                );
+                                if (user?.role == 'dinas') {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const StudentStatisticsScreen(),
+                                    ),
+                                  );
+                                } else {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const SubjectListScreen(),
+                                    ),
+                                  );
+                                }
                               },
                             ),
+
                             _buildQuickMenuGridItem(
                               icon: Icons.calendar_today_rounded,
                               label: "Jadwal",

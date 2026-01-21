@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import '../models/school_model.dart';
+import '../models/student_stats_model.dart';
 
 class DinasService {
   final Dio _dio;
@@ -105,5 +106,20 @@ class DinasService {
     } catch (e) {
       return {'success': false, 'message': e.toString()};
     }
+  }
+
+  Future<StudentStatsModel?> getStudentStats() async {
+    try {
+      final response = await _dio.get(
+        '/dinas/student-stats',
+        options: _options,
+      );
+      if (response.statusCode == 200 && response.data['status'] == 'success') {
+        return StudentStatsModel.fromJson(response.data['data']);
+      }
+    } catch (e) {
+      print("Error fetching student stats: $e");
+    }
+    return null;
   }
 }
