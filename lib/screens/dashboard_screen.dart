@@ -27,6 +27,7 @@ import 'pelanggaran_screen.dart';
 import 'elibrary_screen.dart';
 import 'calendar_screen.dart';
 import 'notification_screen.dart';
+import 'school_management_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -189,10 +190,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             _buildQuickMenuGridItem(
                               icon: user?.role == 'siswa'
                                   ? Icons.how_to_reg_rounded
+                                  : user?.role == 'dinas'
+                                  ? Icons.business_center_rounded
                                   : Icons.face,
                               label: user?.role == 'siswa'
                                   ? "Absensi"
+                                  : user?.role == 'dinas'
+                                  ? "Manajemen Sekolah"
                                   : "Siswa",
+
                               colors: const [
                                 Color(0xFF4F8DF7),
                                 Color(0xFF6FB1FC),
@@ -204,6 +210,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     MaterialPageRoute(
                                       builder: (context) =>
                                           const AttendanceScreen(),
+                                    ),
+                                  );
+                                } else if (user?.role == 'dinas') {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const SchoolManagementScreen(),
                                     ),
                                   );
                                 }
