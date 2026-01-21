@@ -373,4 +373,92 @@ class DinasService {
     }
     return {'success': false, 'message': 'Gagal menghapus CBT Global'};
   }
+
+  // Berita
+  Future<Map<String, dynamic>> getDinasBeritas() async {
+    try {
+      final response = await _dio.get('/dinas/berita', options: _options);
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        return {'success': true, 'data': response.data['data']};
+      }
+    } catch (e) {
+      print("Error fetching dynamic berita: $e");
+    }
+    return {'success': false, 'message': 'Gagal mengambil data berita'};
+  }
+
+  Future<Map<String, dynamic>> createBerita(FormData data) async {
+    try {
+      final response = await _dio.post(
+        '/dinas/berita',
+        data: data,
+        options: _options,
+      );
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        return {'success': true, 'message': response.data['message']};
+      }
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+    return {'success': false, 'message': 'Gagal menambah berita'};
+  }
+
+  Future<Map<String, dynamic>> deleteBerita(String id) async {
+    try {
+      final response = await _dio.delete(
+        '/dinas/berita/$id',
+        options: _options,
+      );
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        return {'success': true, 'message': response.data['message']};
+      }
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+    return {'success': false, 'message': 'Gagal menghapus berita'};
+  }
+
+  // Agenda
+  Future<Map<String, dynamic>> getAgendas() async {
+    try {
+      final response = await _dio.get('/dinas/agenda', options: _options);
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        return {'success': true, 'data': response.data['data']};
+      }
+    } catch (e) {
+      print("Error fetching agendas: $e");
+    }
+    return {'success': false, 'message': 'Gagal mengambil data agenda'};
+  }
+
+  Future<Map<String, dynamic>> createAgenda(Map<String, dynamic> data) async {
+    try {
+      final response = await _dio.post(
+        '/dinas/agenda',
+        data: data,
+        options: _options,
+      );
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        return {'success': true, 'message': response.data['message']};
+      }
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+    return {'success': false, 'message': 'Gagal menambah agenda'};
+  }
+
+  Future<Map<String, dynamic>> deleteAgenda(String id) async {
+    try {
+      final response = await _dio.delete(
+        '/dinas/agenda/$id',
+        options: _options,
+      );
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        return {'success': true, 'message': response.data['message']};
+      }
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+    return {'success': false, 'message': 'Gagal menghapus agenda'};
+  }
 }

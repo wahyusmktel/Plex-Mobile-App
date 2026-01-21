@@ -34,6 +34,8 @@ import 'teacher_certificates_screen.dart';
 import 'violation_monitoring_screen.dart';
 import 'sambutan_dinas_screen.dart';
 import 'cbt_global_screen.dart';
+import 'berita_dinas_screen.dart';
+import 'agenda_dinas_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -386,41 +388,49 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                             _buildQuickMenuGridItem(
                               icon: Icons.quiz_rounded,
-                              label: "CBT Global",
-                              colors: const [
-                                Color(0xFF673AB7),
-                                Color(0xFF9575CD),
-                              ],
+                              label: user?.role == 'dinas'
+                                  ? "CBT Global"
+                                  : "CBT",
+                              colors: user?.role == 'dinas'
+                                  ? const [Color(0xFF673AB7), Color(0xFF9575CD)]
+                                  : const [
+                                      Color(0xFFE91E63),
+                                      Color(0xFFF06292),
+                                    ],
                               onTap: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        const CbtGlobalScreen(),
+                                    builder: (context) => user?.role == 'dinas'
+                                        ? const CbtGlobalScreen()
+                                        : const CbtListScreen(),
                                   ),
                                 );
                               },
                             ),
-                            _buildQuickMenuGridItem(
-                              icon: Icons.how_to_vote_rounded,
-                              label: "E-Voting",
-                              colors: const [
-                                Color(0xFFFFB300),
-                                Color(0xFFFFD54F),
-                              ],
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const EVotingListScreen(),
-                                  ),
-                                );
-                              },
-                            ),
+                            if (user?.role != 'dinas')
+                              _buildQuickMenuGridItem(
+                                icon: Icons.how_to_vote_rounded,
+                                label: "E-Voting",
+                                colors: const [
+                                  Color(0xFFFFB300),
+                                  Color(0xFFFFD54F),
+                                ],
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const EVotingListScreen(),
+                                    ),
+                                  );
+                                },
+                              ),
                             _buildQuickMenuGridItem(
                               icon: Icons.article_rounded,
-                              label: "Berita",
+                              label: user?.role == 'dinas'
+                                  ? "Berita & Artikel"
+                                  : "Berita",
                               colors: const [
                                 Color(0xFF26C6DA),
                                 Color(0xFF80DEEA),
@@ -429,45 +439,67 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        const BeritaListScreen(),
+                                    builder: (context) => user?.role == 'dinas'
+                                        ? const BeritaDinasScreen()
+                                        : const BeritaListScreen(),
                                   ),
                                 );
                               },
                             ),
-                            _buildQuickMenuGridItem(
-                              icon: Icons.assignment_rounded,
-                              label: "E-Raport",
-                              colors: const [
-                                Color(0xFFFF7043),
-                                Color(0xFFFFAB91),
-                              ],
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const ERaportScreen(),
-                                  ),
-                                );
-                              },
-                            ),
-                            _buildQuickMenuGridItem(
-                              icon: Icons.gavel_rounded,
-                              label: "Pelanggaran",
-                              colors: const [
-                                Color(0xFFEF5350),
-                                Color(0xFFE57373),
-                              ],
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const PelanggaranScreen(),
-                                  ),
-                                );
-                              },
-                            ),
+                            if (user?.role == 'dinas')
+                              _buildQuickMenuGridItem(
+                                icon: Icons.calendar_month_rounded,
+                                label: "Agenda Global",
+                                colors: const [
+                                  Color(0xFF42A5F5),
+                                  Color(0xFF90CAF9),
+                                ],
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const AgendaDinasScreen(),
+                                    ),
+                                  );
+                                },
+                              ),
+                            if (user?.role != 'dinas')
+                              _buildQuickMenuGridItem(
+                                icon: Icons.assignment_rounded,
+                                label: "E-Raport",
+                                colors: const [
+                                  Color(0xFFFF7043),
+                                  Color(0xFFFFAB91),
+                                ],
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ERaportScreen(),
+                                    ),
+                                  );
+                                },
+                              ),
+                            if (user?.role != 'dinas')
+                              _buildQuickMenuGridItem(
+                                icon: Icons.gavel_rounded,
+                                label: "Pelanggaran",
+                                colors: const [
+                                  Color(0xFFEF5350),
+                                  Color(0xFFE57373),
+                                ],
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const PelanggaranScreen(),
+                                    ),
+                                  );
+                                },
+                              ),
                           ],
                         ),
                       ),
