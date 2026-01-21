@@ -32,6 +32,7 @@ import 'student_statistics_screen.dart';
 import 'school_data_screen.dart';
 import 'teacher_certificates_screen.dart';
 import 'violation_monitoring_screen.dart';
+import 'sambutan_dinas_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -361,10 +362,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ),
                             _buildQuickMenuGridItem(
                               icon: user?.role == 'dinas'
-                                  ? Icons.collections_bookmark_rounded
+                                  ? Icons.record_voice_over_rounded
                                   : Icons.forum_rounded,
                               label: user?.role == 'dinas'
-                                  ? "Bank Soal"
+                                  ? "Sambutan Dinas"
                                   : "Forum",
                               colors: const [
                                 Color(0xFF009688),
@@ -375,7 +376,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => user?.role == 'dinas'
-                                        ? const BankSoalListScreen()
+                                        ? const SambutanDinasScreen()
                                         : const ForumListScreen(),
                                   ),
                                 );

@@ -3,6 +3,7 @@ import '../models/school_model.dart';
 import '../models/student_stats_model.dart';
 import '../models/teacher_certificate_model.dart';
 import '../models/violation_model.dart';
+import '../models/sambutan_model.dart';
 
 class DinasService {
   final Dio _dio;
@@ -11,6 +12,72 @@ class DinasService {
   DinasService(this._dio, this._token);
 
   Options get _options => Options(headers: {'Authorization': 'Bearer $_token'});
+
+  Future<Map<String, dynamic>> getSambutans() async {
+    try {
+      final response = await _dio.get('/dinas/sambutan', options: _options);
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        final List<dynamic> list = response.data['data'];
+        final List<SambutanModel> sambutans = list
+            .map((json) => SambutanModel.fromJson(json))
+            .toList();
+
+        return {'success': true, 'sambutans': sambutans};
+      }
+    } catch (e) {
+      print("Error fetching sambutans: $e");
+    }
+    return {'success': false, 'message': 'Gagal mengambil data sambutan'};
+  }
+
+  Future<Map<String, dynamic>> createSambutan({
+    required String judul,
+    required String konten,
+    required String thumbnailPath,
+  }) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'judul': judul,
+        'konten': konten,
+        'thumbnail': await MultipartFile.fromFile(
+          thumbnailPath,
+          filename: thumbnailPath.split('/').last,
+        ),
+      });
+
+      final response = await _dio.post(
+        '/dinas/sambutan',
+        data: formData,
+        options: _options,
+      );
+
+      return {
+        'success':
+            response.statusCode == 200 && response.data['success'] == true,
+        'message': response.data['message'] ?? 'Berhasil menambah sambutan',
+      };
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
+  Future<Map<String, dynamic>> deleteSambutan(String id) async {
+    try {
+      final response = await _dio.delete(
+        '/dinas/sambutan/$id',
+        options: _options,
+      );
+
+      return {
+        'success':
+            response.statusCode == 200 && response.data['success'] == true,
+        'message': response.data['message'] ?? 'Berhasil menghapus sambutan',
+      };
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
 
   Future<Map<String, dynamic>> getSchools({
     String? search,
