@@ -99,17 +99,7 @@ class _RegisterSchoolScreenState extends State<RegisterSchoolScreen> {
                   "Identitas Sekolah",
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                subtitle: Column(
-                  children: [
-                    const Text("Informasi dasar institusi"),
-                    const SizedBox(height: 16),
-                    Image.asset(
-                      'assets/logo-nobg.png',
-                      height: 80,
-                      fit: BoxFit.contain,
-                    ),
-                  ],
-                ),
+                subtitle: const Text("Informasi dasar institusi"),
                 isActive: _currentStep >= 0,
                 state: _currentStep > 0
                     ? StepState.complete
