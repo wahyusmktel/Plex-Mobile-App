@@ -29,6 +29,7 @@ import 'calendar_screen.dart';
 import 'notification_screen.dart';
 import 'school_management_screen.dart';
 import 'student_statistics_screen.dart';
+import 'school_data_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -257,22 +258,37 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ),
 
                             _buildQuickMenuGridItem(
-                              icon: Icons.calendar_today_rounded,
-                              label: "Jadwal",
+                              icon: user?.role == 'dinas'
+                                  ? Icons.format_list_bulleted_rounded
+                                  : Icons.calendar_today_rounded,
+                              label: user?.role == 'dinas'
+                                  ? "Data Sekolah"
+                                  : "Jadwal",
                               colors: const [
                                 Color(0xFFF45D48),
                                 Color(0xFFFF8A65),
                               ],
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ScheduleScreen(),
-                                  ),
-                                );
+                                if (user?.role == 'dinas') {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const SchoolDataScreen(),
+                                    ),
+                                  );
+                                } else {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ScheduleScreen(),
+                                    ),
+                                  );
+                                }
                               },
                             ),
+
                             _buildQuickMenuGridItem(
                               icon: Icons.score_rounded,
                               label: "Nilai",

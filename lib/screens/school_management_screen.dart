@@ -40,9 +40,11 @@ class _SchoolManagementScreenState extends State<SchoolManagementScreen> {
   }
 
   void _onScroll() {
+    if (!mounted) return;
     if (_scrollController.position.pixels >=
             _scrollController.position.maxScrollExtent - 200 &&
         !_isMoreLoading &&
+        !_isLoading &&
         _currentPage < _lastPage) {
       _loadMore();
     }
@@ -81,7 +83,9 @@ class _SchoolManagementScreenState extends State<SchoolManagementScreen> {
   Future<void> _loadMore() async {
     if (_isMoreLoading || _currentPage >= _lastPage) return;
 
-    setState(() => _isMoreLoading = true);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) setState(() => _isMoreLoading = true);
+    });
     _currentPage++;
 
     final result = await _dinasService.getSchools(

@@ -5,7 +5,7 @@ import '../theme/app_theme.dart';
 import '../utils/notification_helper.dart';
 import '../widgets/app_button.dart';
 import '../widgets/app_text_field.dart';
-import 'register_school_screen.dart';
+// import 'register_school_screen.dart'; // Commented out unused import
 import 'dashboard_screen.dart';
 
 class LoginScreen extends StatefulWidget {

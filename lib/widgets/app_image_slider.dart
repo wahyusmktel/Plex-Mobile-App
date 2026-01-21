@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import '../models/slider_model.dart';
-import '../theme/app_theme.dart';
 
 class AppImageSlider extends StatelessWidget {
   final List<SliderModel> sliders;

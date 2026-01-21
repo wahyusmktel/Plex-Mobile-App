@@ -108,6 +108,23 @@ class DinasService {
     }
   }
 
+  Future<Map<String, dynamic>> resetAdminPassword(String schoolId) async {
+    try {
+      final response = await _dio.post(
+        '/dinas/schools/$schoolId/reset-password',
+        options: _options,
+      );
+      return {
+        'success':
+            response.statusCode == 200 && response.data['status'] == 'success',
+        'message':
+            response.data['message'] ?? 'Berhasil meriset password admin',
+      };
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+  }
+
   Future<StudentStatsModel?> getStudentStats() async {
     try {
       final response = await _dio.get(
