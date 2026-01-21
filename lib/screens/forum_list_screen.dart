@@ -53,6 +53,115 @@ class _ForumListScreenState extends State<ForumListScreen> {
           );
         },
       ),
+      floatingActionButton: Consumer<AuthProvider>(
+        builder: (context, auth, _) {
+          final role = auth.user?.role;
+          if (role == 'guru' || role == 'admin' || role == 'dinas') {
+            return FloatingActionButton.extended(
+              onPressed: () => _showCreateForumDialog(context, auth),
+              backgroundColor: AppTheme.primary,
+              icon: const Icon(Icons.add_comment_rounded, color: Colors.white),
+              label: const Text(
+                "Buat Forum",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            );
+          }
+          return const SizedBox.shrink();
+        },
+      ),
+    );
+  }
+
+  void _showCreateForumDialog(BuildContext context, AuthProvider auth) {
+    final titleController = TextEditingController();
+    final descController = TextEditingController();
+    String visibility = 'all';
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          title: const Text(
+            "Buat Forum Baru",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: titleController,
+                  decoration: const InputDecoration(
+                    labelText: "Judul Forum",
+                    hintText: "Contoh: Diskusi Matematika",
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: descController,
+                  decoration: const InputDecoration(
+                    labelText: "Deskripsi",
+                    hintText: "Jelaskan tujuan forum ini...",
+                  ),
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  value: visibility,
+                  decoration: const InputDecoration(labelText: "Visibilitas"),
+                  items: const [
+                    DropdownMenuItem(value: 'all', child: Text("Publik")),
+                    DropdownMenuItem(value: 'school', child: Text("Sekolah")),
+                  ],
+                  onChanged: (val) => setModalState(() => visibility = val!),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Batal"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (titleController.text.isEmpty) return;
+
+                final success = await auth.createForum(
+                  title: titleController.text,
+                  description: descController.text,
+                  visibility: visibility,
+                );
+
+                if (success) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Forum berhasil dibuat")),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Gagal membuat forum")),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.primary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Text("Buat", style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

@@ -641,6 +641,54 @@ class AuthProvider with ChangeNotifier {
     return false;
   }
 
+  Future<bool> createForum({
+    required String title,
+    required String description,
+    required String visibility,
+  }) async {
+    if (_token == null) return false;
+
+    try {
+      final response = await _authService.createForum(
+        _token!,
+        title,
+        description,
+        visibility,
+      );
+      if (response.statusCode == 200 && response.data['status'] != 'error') {
+        await fetchForums();
+        return true;
+      }
+    } catch (e) {
+      debugPrint("Error creating forum: $e");
+    }
+    return false;
+  }
+
+  Future<bool> createTopic({
+    required String forumId,
+    required String title,
+    required String content,
+  }) async {
+    if (_token == null) return false;
+
+    try {
+      final response = await _authService.createTopic(
+        _token!,
+        forumId,
+        title,
+        content,
+      );
+      if (response.statusCode == 200 && response.data['status'] != 'error') {
+        await fetchForumDetail(forumId);
+        return true;
+      }
+    } catch (e) {
+      debugPrint("Error creating topic: $e");
+    }
+    return false;
+  }
+
   Future<void> fetchProfile() async {
     if (_token == null) return;
     _isLoading = true;

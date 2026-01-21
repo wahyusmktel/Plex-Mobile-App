@@ -42,8 +42,101 @@ class _ForumTopicListScreenState extends State<ForumTopicListScreen> {
           body: auth.isLoading || forum == null || forum.id != widget.forumId
               ? const Center(child: CircularProgressIndicator())
               : _buildTopicList(forum),
+          floatingActionButton: FloatingActionButton.extended(
+            onPressed: () =>
+                _showCreateTopicDialog(context, auth, widget.forumId),
+            backgroundColor: AppTheme.primary,
+            icon: const Icon(Icons.add_comment_rounded, color: Colors.white),
+            label: const Text(
+              "Mulai Diskusi",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
         );
       },
+    );
+  }
+
+  void _showCreateTopicDialog(
+    BuildContext context,
+    AuthProvider auth,
+    String forumId,
+  ) {
+    final titleController = TextEditingController();
+    final contentController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: const Text(
+          "Mulai Diskusi Baru",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: const InputDecoration(
+                  labelText: "Judul Topik",
+                  hintText: "Contoh: Tanya Soal Fisika",
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: contentController,
+                decoration: const InputDecoration(
+                  labelText: "Isi Konten",
+                  hintText: "Apa yang ingin Anda diskusikan?",
+                ),
+                maxLines: 5,
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Batal"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (titleController.text.isEmpty ||
+                  contentController.text.isEmpty)
+                return;
+
+              final success = await auth.createTopic(
+                forumId: forumId,
+                title: titleController.text,
+                content: contentController.text,
+              );
+
+              if (success) {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Topik berhasil dibuat")),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Gagal membuat topik")),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: const Text("Kirim", style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
     );
   }
 

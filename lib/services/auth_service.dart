@@ -383,6 +383,44 @@ class AuthService {
     }
   }
 
+  Future<Response> createForum(
+    String token,
+    String title,
+    String description,
+    String visibility,
+  ) async {
+    try {
+      return await _dio.post(
+        '/student/forums',
+        data: {
+          'title': title,
+          'description': description,
+          'visibility': visibility,
+        },
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Response> createTopic(
+    String token,
+    String forumId,
+    String title,
+    String content,
+  ) async {
+    try {
+      return await _dio.post(
+        '/student/forums/$forumId/topic',
+        data: {'title': title, 'content': content},
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<Response> getProfile(String token) async {
     try {
       return await _dio.get(

@@ -338,8 +338,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ),
 
                             _buildQuickMenuGridItem(
-                              icon: Icons.collections_bookmark_rounded,
-                              label: "Bank Soal",
+                              icon: user?.role == 'dinas'
+                                  ? Icons.forum_rounded
+                                  : Icons.collections_bookmark_rounded,
+                              label: user?.role == 'dinas'
+                                  ? "Forum Diskusi"
+                                  : "Bank Soal",
                               colors: const [
                                 Color(0xFF3F51B5),
                                 Color(0xFF7986CB),
@@ -348,15 +352,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        const BankSoalListScreen(),
+                                    builder: (context) => user?.role == 'dinas'
+                                        ? const ForumListScreen()
+                                        : const BankSoalListScreen(),
                                   ),
                                 );
                               },
                             ),
                             _buildQuickMenuGridItem(
-                              icon: Icons.forum_rounded,
-                              label: "Forum",
+                              icon: user?.role == 'dinas'
+                                  ? Icons.collections_bookmark_rounded
+                                  : Icons.forum_rounded,
+                              label: user?.role == 'dinas'
+                                  ? "Bank Soal"
+                                  : "Forum",
                               colors: const [
                                 Color(0xFF009688),
                                 Color(0xFF4DB6AC),
@@ -365,12 +374,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ForumListScreen(),
+                                    builder: (context) => user?.role == 'dinas'
+                                        ? const BankSoalListScreen()
+                                        : const ForumListScreen(),
                                   ),
                                 );
                               },
                             ),
+
                             _buildQuickMenuGridItem(
                               icon: Icons.quiz_rounded,
                               label: "CBT",
