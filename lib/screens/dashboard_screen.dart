@@ -31,6 +31,7 @@ import 'school_management_screen.dart';
 import 'student_statistics_screen.dart';
 import 'school_data_screen.dart';
 import 'teacher_certificates_screen.dart';
+import 'violation_monitoring_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -314,8 +315,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ),
 
                             _buildQuickMenuGridItem(
-                              icon: Icons.auto_stories_rounded,
-                              label: "E-Learning",
+                              icon: user?.role == 'dinas'
+                                  ? Icons.report_problem_rounded
+                                  : Icons.auto_stories_rounded,
+                              label: user?.role == 'dinas'
+                                  ? "Mon. Pelanggaran"
+                                  : "E-Learning",
                               colors: const [
                                 Color(0xFF7E57C2),
                                 Color(0xFFB39DDB),
@@ -324,12 +329,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ELearningListScreen(),
+                                    builder: (context) => user?.role == 'dinas'
+                                        ? const ViolationMonitoringScreen()
+                                        : const ELearningListScreen(),
                                   ),
                                 );
                               },
                             ),
+
                             _buildQuickMenuGridItem(
                               icon: Icons.collections_bookmark_rounded,
                               label: "Bank Soal",

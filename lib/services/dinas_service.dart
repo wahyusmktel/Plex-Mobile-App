@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import '../models/school_model.dart';
 import '../models/student_stats_model.dart';
 import '../models/teacher_certificate_model.dart';
+import '../models/violation_model.dart';
 
 class DinasService {
   final Dio _dio;
@@ -195,5 +196,35 @@ class DinasService {
       print("Error fetching certificate details: $e");
     }
     return {'success': false, 'message': 'Gagal mengambil detail sertifikat'};
+  }
+
+  Future<Map<String, dynamic>> getViolations({
+    String? search,
+    int page = 1,
+  }) async {
+    try {
+      final response = await _dio.get(
+        '/dinas/violations',
+        queryParameters: {if (search != null) 'search': search, 'page': page},
+        options: _options,
+      );
+
+      if (response.statusCode == 200 && response.data['status'] == 'success') {
+        final List<dynamic> list = response.data['data']['data'];
+        final List<ViolationModel> violations = list
+            .map((json) => ViolationModel.fromJson(json))
+            .toList();
+
+        return {
+          'success': true,
+          'violations': violations,
+          'current_page': response.data['data']['current_page'],
+          'last_page': response.data['data']['last_page'],
+        };
+      }
+    } catch (e) {
+      print("Error fetching violations: $e");
+    }
+    return {'success': false, 'message': 'Gagal mengambil data pelanggaran'};
   }
 }
