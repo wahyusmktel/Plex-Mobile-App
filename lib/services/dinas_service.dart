@@ -294,4 +294,83 @@ class DinasService {
     }
     return {'success': false, 'message': 'Gagal mengambil data pelanggaran'};
   }
+
+  Future<Map<String, dynamic>> getGlobalCbts() async {
+    try {
+      final response = await _dio.get('/dinas/cbt-global', options: _options);
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        return {'success': true, 'data': response.data['data']};
+      }
+    } catch (e) {
+      print("Error fetching global cbts: $e");
+    }
+    return {'success': false, 'message': 'Gagal mengambil data CBT Global'};
+  }
+
+  Future<Map<String, dynamic>> getGlobalSubjects() async {
+    try {
+      final response = await _dio.get(
+        '/dinas/subjects-global',
+        options: _options,
+      );
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        return {'success': true, 'data': response.data['data']};
+      }
+    } catch (e) {
+      print("Error fetching global subjects: $e");
+    }
+    return {'success': false, 'message': 'Gagal mengambil data mata pelajaran'};
+  }
+
+  Future<Map<String, dynamic>> createCbtGlobal(
+    Map<String, dynamic> data,
+  ) async {
+    try {
+      final response = await _dio.post(
+        '/dinas/cbt-global',
+        data: data,
+        options: _options,
+      );
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        return {'success': true, 'message': response.data['message']};
+      }
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+    return {'success': false, 'message': 'Gagal menambah CBT Global'};
+  }
+
+  Future<Map<String, dynamic>> updateCbtGlobal(
+    String id,
+    Map<String, dynamic> data,
+  ) async {
+    try {
+      final response = await _dio.post(
+        '/dinas/cbt-global/$id',
+        data: data,
+        options: _options,
+      );
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        return {'success': true, 'message': response.data['message']};
+      }
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+    return {'success': false, 'message': 'Gagal memperbarui CBT Global'};
+  }
+
+  Future<Map<String, dynamic>> deleteCbtGlobal(String id) async {
+    try {
+      final response = await _dio.delete(
+        '/dinas/cbt-global/$id',
+        options: _options,
+      );
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        return {'success': true, 'message': response.data['message']};
+      }
+    } catch (e) {
+      return {'success': false, 'message': e.toString()};
+    }
+    return {'success': false, 'message': 'Gagal menghapus CBT Global'};
+  }
 }

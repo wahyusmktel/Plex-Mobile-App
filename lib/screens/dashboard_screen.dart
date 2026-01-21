@@ -33,6 +33,7 @@ import 'school_data_screen.dart';
 import 'teacher_certificates_screen.dart';
 import 'violation_monitoring_screen.dart';
 import 'sambutan_dinas_screen.dart';
+import 'cbt_global_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -385,16 +386,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                             _buildQuickMenuGridItem(
                               icon: Icons.quiz_rounded,
-                              label: "CBT",
+                              label: "CBT Global",
                               colors: const [
-                                Color(0xFFE91E63),
-                                Color(0xFFF06292),
+                                Color(0xFF673AB7),
+                                Color(0xFF9575CD),
                               ],
                               onTap: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const CbtListScreen(),
+                                    builder: (context) =>
+                                        const CbtGlobalScreen(),
                                   ),
                                 );
                               },
