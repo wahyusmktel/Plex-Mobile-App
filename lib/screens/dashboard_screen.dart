@@ -30,6 +30,7 @@ import 'notification_screen.dart';
 import 'school_management_screen.dart';
 import 'student_statistics_screen.dart';
 import 'school_data_screen.dart';
+import 'teacher_certificates_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -290,8 +291,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ),
 
                             _buildQuickMenuGridItem(
-                              icon: Icons.score_rounded,
-                              label: "Nilai",
+                              icon: user?.role == 'dinas'
+                                  ? Icons.workspace_premium_rounded
+                                  : Icons.score_rounded,
+                              label: user?.role == 'dinas'
+                                  ? "Sertifikat Guru"
+                                  : "Nilai",
                               colors: const [
                                 Color(0xFF26A69A),
                                 Color(0xFF4DB6AC),
@@ -300,11 +305,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const GradeScreen(),
+                                    builder: (context) => user?.role == 'dinas'
+                                        ? const TeacherCertificatesScreen()
+                                        : const GradeScreen(),
                                   ),
                                 );
                               },
                             ),
+
                             _buildQuickMenuGridItem(
                               icon: Icons.auto_stories_rounded,
                               label: "E-Learning",

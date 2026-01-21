@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import '../models/school_model.dart';
 import '../models/student_stats_model.dart';
+import '../models/teacher_certificate_model.dart';
 
 class DinasService {
   final Dio _dio;
@@ -138,5 +139,61 @@ class DinasService {
       print("Error fetching student stats: $e");
     }
     return null;
+  }
+
+  Future<Map<String, dynamic>> getTeachersWithCertificates({
+    String? search,
+    int page = 1,
+  }) async {
+    try {
+      final response = await _dio.get(
+        '/dinas/teacher-certificates',
+        queryParameters: {if (search != null) 'search': search, 'page': page},
+        options: _options,
+      );
+
+      if (response.statusCode == 200 && response.data['status'] == 'success') {
+        final List<dynamic> list = response.data['data']['data'];
+        final List<TeacherModel> teachers = list
+            .map((json) => TeacherModel.fromJson(json))
+            .toList();
+
+        return {
+          'success': true,
+          'teachers': teachers,
+          'current_page': response.data['data']['current_page'],
+          'last_page': response.data['data']['last_page'],
+        };
+      }
+    } catch (e) {
+      print("Error fetching teachers: $e");
+    }
+    return {'success': false, 'message': 'Gagal mengambil data guru'};
+  }
+
+  Future<Map<String, dynamic>> getTeacherCertificateDetails(
+    String teacherId,
+  ) async {
+    try {
+      final response = await _dio.get(
+        '/dinas/teacher-certificates/$teacherId',
+        options: _options,
+      );
+      if (response.statusCode == 200 && response.data['status'] == 'success') {
+        final List<dynamic> certList = response.data['data']['certificates'];
+        final List<TeacherCertificateModel> certificates = certList
+            .map((json) => TeacherCertificateModel.fromJson(json))
+            .toList();
+
+        return {
+          'success': true,
+          'teacher': TeacherModel.fromJson(response.data['data']['teacher']),
+          'certificates': certificates,
+        };
+      }
+    } catch (e) {
+      print("Error fetching certificate details: $e");
+    }
+    return {'success': false, 'message': 'Gagal mengambil detail sertifikat'};
   }
 }
